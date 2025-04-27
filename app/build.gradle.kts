@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "com.alexis.petcare20"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.alexis.petcare20"
