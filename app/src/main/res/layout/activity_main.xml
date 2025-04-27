@@ -22,6 +22,15 @@
             android:layout_height="wrap_content"
             android:text="Mascotas"
             android:textSize="24sp" />
+        <!--No se ve ya que esta muy abajo-->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAgregarMascotas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="620dp"
+            android:layout_marginStart="320dp"
+            android:backgroundTint="@color/color_menu"
+            android:src="@android:drawable/ic_input_add" />
     </LinearLayout>
 
     <LinearLayout
@@ -54,6 +63,17 @@
             android:layout_height="wrap_content"
             android:text="Citas"
             android:textSize="24sp"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAgregarCitasMascotas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="620dp"
+            android:layout_marginStart="320dp"
+            android:backgroundTint="@color/color_menu"
+            android:src="@android:drawable/ic_input_add" />
+
+
     </LinearLayout>
 
 

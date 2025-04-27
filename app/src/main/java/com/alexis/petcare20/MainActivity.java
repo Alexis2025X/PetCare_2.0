@@ -3,23 +3,17 @@ package com.alexis.petcare20;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
    // private LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     BottomNavigationView bottomNav;
+    FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
                 layout_citas.setVisibility(View.VISIBLE);
                 layout_veterinarios.setVisibility(View.GONE);
                 layout_cuenta.setVisibility(View.GONE);
+
+                fab = findViewById(R.id.fabAgregarCitasMascotas);
+                fab.setOnClickListener(view->abrirVentana());
+
                 return true;
             } else if (item.getItemId() == R.id.veterinariosMenu) {
                 layout_mascotas.setVisibility(View.GONE);
@@ -74,5 +72,9 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
+    }
+    private void abrirVentana(){
+        Intent intent = new Intent(this, agregar_citas.class);
+        startActivity(intent);
     }
 }
