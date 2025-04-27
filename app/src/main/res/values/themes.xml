@@ -5,5 +5,11 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
+    <style name="BottomNavigation">
+        <item name="android:background">@color/color_menu</item>
+        <item name="itemIconTint">@color/color_letras</item>
+        <item name="itemTextColor">@color/color_letras</item>
+    </style>
+
     <style name="Theme.PetCare20" parent="Base.Theme.PetCare20" />
 </resources>
