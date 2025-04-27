@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_fondo"
+    tools:context=".agregar_citas">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_menu"
+        android:gravity="center_horizontal"
+        android:text="Citas"
+        android:textColor="@color/color_letras"
+        android:textSize="50dp" />
+
+    <ImageButton
+        android:id="@+id/imgFotoMascotaCita"
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/txtNombreMascota"
+        android:layout_width="362dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:layout_centerHorizontal="true"
+        android:hint="Nombre de la mascota" />
+
+    <EditText
+        android:id="@+id/txtFecha"
+        android:layout_width="362dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtNombreMascota"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:hint="Fecha de la cita" />
+
+    <EditText
+        android:id="@+id/txtHora"
+        android:layout_width="362dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtFecha"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:hint="Hora de la cita" />
+
+    <EditText
+        android:id="@+id/txtNombreClinica"
+        android:layout_width="362dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtHora"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:hint="Nombre de la clinica" />
+
+    <EditText
+        android:id="@+id/txtNota"
+        android:layout_width="362dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtNombreClinica"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:hint="Información extra"
+        />
+
+
+    <Button
+        android:id="@+id/btnGuardarAmigo"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtNota"
+        android:layout_marginTop="42dp"
+        android:layout_centerHorizontal="true"
+        android:text="Guardar Amigo"
+        app:cardCornerRadius="150dp"
+        android:backgroundTint="@color/color_btn"
+        android:textColor="@color/black"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabListaCitasMascotas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginBottom="92dp"
+        android:backgroundTint="@color/color_menu"
+        android:src="@android:drawable/ic_menu_revert" />
+</RelativeLayout>
