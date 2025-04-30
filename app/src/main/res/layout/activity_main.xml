@@ -16,13 +16,19 @@
         android:orientation="vertical"
         android:visibility="visible">  <!-- Vista inicial visible -->
 
+        <EditText
+            android:id="@+id/txtBuscarMascotas"
+            android:drawableEnd="@drawable/lupa"
+            android:hint="Buscar mascotas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mascotas"
-            android:textSize="24sp" />
-        <!--No se ve ya que esta muy abajo-->
+        <ListView
+            android:id="@+id/ltsMascotas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="-1dp" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAgregarMascotas"
             android:layout_width="wrap_content"
@@ -57,12 +63,18 @@
         android:orientation="vertical"
         android:visibility="gone">  <!-- Vista inicial visible -->
 
+        <EditText
+            android:id="@+id/txtBuscarCitas"
+            android:drawableEnd="@drawable/lupa"
+            android:hint="Buscar citas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Citas"
-            android:textSize="24sp"/>
+        <ListView
+            android:id="@+id/ltsCitas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="-1dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAgregarCitasMascotas"

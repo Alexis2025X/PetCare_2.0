@@ -11,6 +11,7 @@
 
     <!-- Campo de texto para el nombre de usuario -->
     <TextView
+        android:id="@+id/txtBienvenido"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -33,7 +34,7 @@
         android:layout_marginTop="100dp"/>
 
     <EditText
-        android:id="@+id/txtUsuario"
+        android:id="@+id/txtNombreUsuario"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:hint="Nombre de Usuario"
@@ -58,7 +59,7 @@
 
     <!-- Botón para iniciar sesión -->
     <Button
-        android:id="@+id/btnLogin"
+        android:id="@+id/btnIniciarSesion"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -80,12 +81,12 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/btnCreateUser"
+        android:id="@+id/btnCrearCuenta"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/color_btn"
-        android:text="Crear Usuario"
+        android:text="Crear cuenta"
         android:textColor="@color/black"
         android:layout_marginTop="560dp"/>
 
