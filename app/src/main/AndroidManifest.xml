@@ -19,6 +19,9 @@
             android:name=".agregar_mascotas"
             android:exported="false" />
         <activity
+            android:name=".crear_cuenta"
+            android:exported="false" />
+        <activity
             android:name=".agregar_citas"
             android:exported="false" />
         <activity
