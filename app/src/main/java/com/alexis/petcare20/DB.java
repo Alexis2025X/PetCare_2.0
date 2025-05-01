@@ -18,7 +18,6 @@ public class DB extends SQLiteOpenHelper {
     //tabla de Citas
     private static final String SQLdbCitas = "CREATE TABLE Citas (idCitas INTEGER PRIMARY KEY AUTOINCREMENT, mascota  Text, dueño Text, fecha DATETIME, clinica TEXT, nota TEXT)";
 
-
     //Contexto de la base de datos
     public DB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
