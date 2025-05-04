@@ -12,7 +12,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/CvCitas"
         android:layout_width="400dp"
-        android:layout_height="400dp"
+        android:layout_height="450dp"
         android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
         android:backgroundTint="#FFB222"
@@ -51,7 +51,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="200dp"
             android:text="Fecha: "
-            android:textSize="30sp" />
+            android:textSize="25sp" />
 
       
 
@@ -72,7 +72,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="250dp"
             android:text="Clinica: "
-            android:textSize="30sp" />
+            android:textSize="25sp" />
 
         <EditText
             android:id="@+id/txtNombreClinica"
@@ -92,7 +92,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="300dp"
             android:text="Notas: "
-            android:textSize="30sp" />
+            android:textSize="25sp" />
 
         <EditText
             android:id="@+id/txtNota"
