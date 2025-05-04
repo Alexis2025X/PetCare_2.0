@@ -35,7 +35,7 @@
 
     <EditText
         android:id="@+id/txtNombreUsuario"
-        android:layout_width="350dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:hint="Nombre de Usuario"
         android:inputType="text"
@@ -49,7 +49,7 @@
     <!-- Campo de texto para la contraseña -->
     <EditText
         android:id="@+id/txtPassword"
-        android:layout_width="350dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:hint="Contraseña"
         android:inputType="textPassword"
@@ -57,7 +57,7 @@
         android:minHeight="48dp"
         android:layout_marginTop="380dp"
         android:layout_centerHorizontal="true"
-        android:drawableStart="@drawable/correo"/>
+        android:drawableStart="@drawable/candado"/>
 
     <!-- Botón para iniciar sesión -->
     <Button
@@ -92,25 +92,27 @@
         android:textColor="@color/black"
         android:layout_marginTop="560dp"/>
 
-<!--    <ImageButton
+    <ImageButton
         android:id="@+id/btnOcultar"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:background="@null"
         android:src="@drawable/ojo_no_ver"
         android:textColor="@color/black"
-        android:layout_marginTop="610dp"/>
+        android:layout_marginStart="360dp"
+        android:layout_marginTop="390dp"
+        android:visibility="visible"/>
 
 
-    <ImageButton
+<!--    <ImageButton
         android:id="@+id/btnVer"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:background="@null"
         android:src="@drawable/ojo_ver"
         android:textColor="@color/black"
-        android:layout_marginTop="660dp"/>-->
+        android:layout_marginStart="370dp"
+        android:layout_marginTop="390dp"
+        android:visibility="gone"/>-->
 
 </RelativeLayout>
