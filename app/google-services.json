@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "759970515240",
+    "firebase_url": "https://petcarenotificaciones-default-rtdb.firebaseio.com",
+    "project_id": "petcarenotificaciones",
+    "storage_bucket": "petcarenotificaciones.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759970515240:android:b57d258d31bdfad198a81d",
+        "android_client_info": {
+          "package_name": "com.alexis.petcare20"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcGDVTL9EXWX9vPq-84Y23nuIXGaWyFLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
