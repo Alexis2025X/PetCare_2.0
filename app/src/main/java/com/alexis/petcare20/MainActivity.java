@@ -3,6 +3,7 @@ package com.alexis.petcare20;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -14,6 +15,8 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     BottomNavigationView bottomNav;
     FloatingActionButton fab;
+    Button btn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +28,11 @@ public class MainActivity extends AppCompatActivity {
         layout_cuenta = findViewById(R.id.layout_cuenta);
 
         bottomNav = findViewById(R.id.bottom_nav);
-        //linerLayout = findViewById(R.id.layout_mascotas);
+
+        //Listo por defecto
+        fab = findViewById(R.id.fabAgregarMascotas);
+        fab.setOnClickListener(view->abrirAgregarMascotas());
+
         bottomNav.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.mascotasMenu) {
                 layout_mascotas.setVisibility(View.VISIBLE);
@@ -33,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
                 layout_citas.setVisibility(View.GONE);
                 layout_veterinarios.setVisibility(View.GONE);
                 layout_cuenta.setVisibility(View.GONE);
+
+                fab = findViewById(R.id.fabAgregarMascotas);
+                fab.setOnClickListener(view->abrirAgregarMascotas());
 
                 return true;
             }else if (item.getItemId() == R.id.chatMenu) {
@@ -67,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
                     layout_citas.setVisibility(View.GONE);
                     layout_veterinarios.setVisibility(View.GONE);
                     layout_cuenta.setVisibility(View.VISIBLE);
+
+                    btn = findViewById(R.id.btnCerrarSesion);
+                    btn.setOnClickListener(view -> {
+                        Intent intent = new Intent(this, Login.class);
+                        startActivity(intent);
+                    });
                     return true;
             }
             return false;
@@ -75,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
     }
     private void abrirVentana(){
         Intent intent = new Intent(this, agregar_citas.class);
+        startActivity(intent);
+    }
+    private void abrirAgregarMascotas(){
+        Intent intent = new Intent(this, agregar_mascotas.class);
         startActivity(intent);
     }
 }

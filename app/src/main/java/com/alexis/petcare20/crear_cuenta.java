@@ -2,6 +2,7 @@ package com.alexis.petcare20;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class crear_cuenta extends AppCompatActivity {
 
     FloatingActionButton fab;
+    Button btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +24,10 @@ public class crear_cuenta extends AppCompatActivity {
 
         fab = findViewById(R.id.fabLogin);
         fab.setOnClickListener(view -> {
+            abrirLogin();
+        });
+        btn = findViewById(R.id.btnCrearCuenta);
+        btn.setOnClickListener(view -> {
             abrirLogin();
         });
     }
