@@ -44,6 +44,18 @@ public class MainActivity extends AppCompatActivity {
     JSONArray jsonArray;
     JSONObject jsonObject;
     citas misCitas;
+//Para mascotas
+
+    //JSONArray jsonArray;
+    final ArrayList<mascotas> alMascotas = new ArrayList<mascotas>();
+    final ArrayList<mascotas> alMascotasCopia = new ArrayList<mascotas>();
+    ListView ltsMascotas;
+    Cursor cMascotas;
+    //JSONObject jsonObject;
+    mascotas misMascotas;
+    //int posicion = 0;
+    //Bundle parametros = new Bundle();
+    //DB db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
         });
         obtenerDatosCitas();
         buscarCitas();
+        //para mascotas
+        obtenerDatosMascotas();
+        buscarMascotas();
 
     }
     private void abrirVentana(){
@@ -131,12 +146,14 @@ public class MainActivity extends AppCompatActivity {
     }
     private void abrirAgregarMascotas(){
         Intent intent = new Intent(this, agregar_mascotas.class);
+        intent.putExtras(parametros);
         startActivity(intent);
     }
     /////////////////////////////////////////
     private void mostrarMsg(String msg){
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
+    //La función de menu sirve para mascotas y citas
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -152,23 +169,50 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        try{
-            if( item.getItemId()==R.id.mnxNuevo){
-                abrirVentana();
-            }else if( item.getItemId()==R.id.mnxModificar){
-                parametros.putString("accion", "modificar");
-                parametros.putString("citas", jsonArray.getJSONObject(posicion).toString());
-                abrirVentana();
-            } else if (item.getItemId()==R.id.mnxEliminar) {
-                eliminarCita();
-                obtenerDatosCitas();
-                buscarCitas();
+        
+        if(item.getItemId() == R.id.mascotasMenu){
+            try {
+                if (item.getItemId() == R.id.mnxNuevo) {
+                    parametros.putString("accion", "nuevo");
+                    abrirAgregarMascotas();
+                } else if (item.getItemId() == R.id.mnxModificar) {
+
+                    parametros.putString("accion", "modificar");
+                    parametros.putString("mascotas", jsonArray.getJSONObject(posicion).toString());
+
+                    abrirAgregarMascotas();
+
+                } else if (item.getItemId() == R.id.mnxEliminar) {
+                    eliminarMascota();
+                    obtenerDatosMascotas();
+                    buscarMascotas();
+                }
+                return true;
+            } catch (Exception e) {
+                mostrarMsg("Error: " + e.getMessage());
+                return super.onContextItemSelected(item);
             }
-            return true;
-        }catch (Exception e){
-            mostrarMsg("Error: " + e.getMessage());
-            return super.onContextItemSelected(item);
+        }else if(item.getItemId() == R.id.citasMenu){
+            //menu de citas
+            try{
+                if( item.getItemId()==R.id.mnxNuevo){
+                    abrirVentana();
+                }else if( item.getItemId()==R.id.mnxModificar){
+                    parametros.putString("accion", "modificar");
+                    parametros.putString("citas", jsonArray.getJSONObject(posicion).toString());
+                    abrirVentana();
+                } else if (item.getItemId()==R.id.mnxEliminar) {
+                    eliminarCita();
+                    obtenerDatosCitas();
+                    buscarCitas();
+                }
+                return true;
+            }catch (Exception e){
+                mostrarMsg("Error: " + e.getMessage());
+                return super.onContextItemSelected(item);
+            }
         }
+
     }
     private void eliminarCita(){
         try{
@@ -197,18 +241,7 @@ public class MainActivity extends AppCompatActivity {
             mostrarMsg("Error: " + e.getMessage());
         }
     }
-    /*private void listarDatos(){
-        try{
-                jsonObject = new JSONObject(respuesta);
-                jsonArray = jsonObject.getJSONArray("rows");
-                mostrarDatosCitas();
-            }else{//offline
-                obtenerDatosCitas();
-            }
-        }catch (Exception e){
-            mostrarMsg("Error: " + e.getMessage());
-        }
-    }*/
+
     private void obtenerDatosCitas(){
         try{
             cCitas = db.lista_Citas();
@@ -296,6 +329,174 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    //Para mascotas
+    private void obtenerDatosMascotas(){
+        try{
+            db = new DB(this);
+
+            cMascotas = db.lista_mascotas();
+            if(cMascotas.moveToFirst()){
+                jsonArray = new JSONArray();
+                do{
+
+
+                    jsonObject = new JSONObject();
+                    jsonObject.put("idMascota", cMascotas.getString(0));
+                    jsonObject.put("dueño", cMascotas.getString(1));
+                    jsonObject.put("nombre", cMascotas.getString(2));
+                    jsonObject.put("edad", cMascotas.getString(3));
+                    jsonObject.put("raza", cMascotas.getString(4));
+                    jsonObject.put("problemas_medicos", cMascotas.getString(5));
+                    jsonObject.put("foto", cMascotas.getString(6));
+                    jsonArray.put(jsonObject);
+                }while(cMascotas.moveToNext());
+
+                mostrarMascotas();
+
+            }else {
+                mostrarMsg("No hay mascotas registrados.");
+
+            }
+        }catch (Exception e){
+            mostrarMsg("Error: " + e.getMessage());
+        }
+    }
+
+    private void mostrarMascotas() {
+
+        try{
+
+            if(jsonArray.length()>0){
+
+                ltsMascotas = findViewById(R.id.ltsMascotas);
+                alMascotas.clear();
+
+                alMascotasCopia.clear();
+
+                for (int i=0; i<jsonArray.length(); i++){
+                    jsonObject = jsonArray.getJSONObject(i);
+                    misMascotas = new mascotas(
+                            jsonObject.getString("idMascota"),
+                            jsonObject.getString("dueño"),
+                            jsonObject.getString("nombre"),
+                            jsonObject.getString("edad"),
+                            jsonObject.getString("raza"),
+                            jsonObject.getString("problemas_medicos"),
+                            jsonObject.getString("foto")
+
+                    );
+
+
+                    alMascotas.add(misMascotas);
+                }
+                alMascotasCopia.addAll(alMascotas);
+                ltsMascotas.setAdapter(new adaptadorMascotas(this,alMascotas));
+
+                registerForContextMenu(ltsMascotas);
+
+            }else{
+                mostrarMsg("No hay amigos registrados.");
+
+            }
+        }catch (Exception e){
+            mostrarMsg("Error: " + e.getMessage());
+        }
+
+    }
+
+    private void buscarMascotas(){
+        TextView tempVal = findViewById(R.id.txtBuscarMascotas);
+
+        tempVal.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                alMascotas.clear();
+                String buscar = tempVal.getText().toString().trim().toLowerCase();
+                if( buscar.length()<=0){
+                    alMascotas.addAll(alMascotasCopia);
+                }else{
+                    for (mascotas item: alMascotasCopia){
+                        if(item.getNombre().toLowerCase().contains(buscar) ||
+                                item.getEdad().toLowerCase().contains(buscar) ||
+                                item.getDueño().toLowerCase().contains(buscar)){
+                            alMascotas.add(item);
+
+                        }
+                    }
+                    ltsMascotas.setAdapter(new adaptadorMascotas(getApplicationContext(), alMascotas));
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+    /*@Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mi_menu, menu);
+        try {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            posicion = info.position;
+
+            menu.setHeaderTitle(jsonArray.getJSONObject(posicion).getString("nombre"));
+
+
+        } catch (Exception e) {
+            mostrarMsg("Error: " + e.getMessage());
+        }
+    }*/
+//LA COMENTE TEMPORALMENTE
+ /*   @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        try {
+            if (item.getItemId() == R.id.mnxNuevo) {
+                parametros.putString("accion", "nuevo");
+                abrirAgregarMascotas();
+            } else if (item.getItemId() == R.id.mnxModificar) {
+
+                parametros.putString("accion", "modificar");
+                parametros.putString("mascotas", jsonArray.getJSONObject(posicion).toString());
+
+                abrirAgregarMascotas();
+
+            } else if (item.getItemId() == R.id.mnxEliminar) {
+                eliminarMascota();
+                obtenerDatosMascotas();
+                buscarMascotas();
+            }
+            return true;
+        } catch (Exception e) {
+            mostrarMsg("Error: " + e.getMessage());
+            return super.onContextItemSelected(item);
+        }
+    }*/
+
+    private  void eliminarMascota(){
+        try {
+            db = new DB(this);
+            String idMascota = jsonArray.getJSONObject(posicion).getString("idMascota");
+            String respuesta = db.administrar_Mascota("eliminar", new String[]{idMascota});
+            if (respuesta.equals("ok")) {
+                mostrarMsg("Registro eliminada.");
+                obtenerDatosMascotas();
+            } else {
+                mostrarMsg("Error: " + respuesta);
+            }
+        } catch (Exception e) {
+            mostrarMsg("Error: " + e.getMessage());
+        }
+    }
+
+
+}
 
 
 }

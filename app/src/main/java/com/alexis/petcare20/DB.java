@@ -74,7 +74,9 @@ public class DB extends SQLiteOpenHelper {
                     sql = "INSERT INTO Mascota (dueño, nombre, edad,raza,problemas_medicos,foto) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4]+ "', '" + datos[5] + "', '" + datos[6] + "')";
                     break;
                 case "modificar":
-                    sql = "UPDATE Mascota SET dueño = '" + datos[1] + "', nombre = " + datos[2] + ", edad = '" + datos[3] + "', raza = '" + datos[4] + "', problemas_medicos = '" + datos[5] + "', foto = '" + datos[6] + "' WHERE idMascota = '" + datos[0] + "'";
+
+                    sql = "UPDATE Mascota SET dueño = '" + datos[1] + "', nombre = '" + datos[2] + "', edad = '" + datos[3] + "', raza = '" + datos[4] + "', problemas_medicos = '" + datos[5] + "', foto = '" + datos[6] + "' WHERE idMascota = " + datos[0];
+
                     break;
                 case "eliminar":
                     sql = "DELETE FROM Mascota WHERE idMascota = " + datos[0];
