@@ -66,12 +66,10 @@ public class agregar_mascotas extends AppCompatActivity {
     private void mostarDatosMascotaModificar() {
 
         try {
-            mostrarMsg("FUNCION AQUI");
 
-           ;
             Bundle parameters = getIntent().getExtras();
 
-            mostrarMsg(parameters.getString("accion"));
+
 
             accion = parameters.getString("accion");
 
