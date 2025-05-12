@@ -27,7 +27,7 @@
             android:id="@+id/fabAgregarMascotas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="620dp"
+            android:layout_marginTop="520dp"
             android:layout_marginStart="320dp"
             android:backgroundTint="@color/color_menu"
             android:src="@android:drawable/ic_input_add" />
@@ -70,6 +70,11 @@
             android:hint="Buscar citas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+        <ListView
+            android:id="@+id/ltsCitas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="-1dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAgregarCitasMascotas"
@@ -79,12 +84,6 @@
             android:layout_marginStart="320dp"
             android:backgroundTint="@color/color_menu"
             android:src="@android:drawable/ic_input_add" />
-
-        <ListView
-            android:id="@+id/ltsCitas"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="-1dp" />
 
 
     </LinearLayout>
