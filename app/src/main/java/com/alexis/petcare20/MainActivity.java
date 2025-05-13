@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
    // private LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     BottomNavigationView bottomNav;
-    FloatingActionButton fab;
+    FloatingActionButton fab, fabAgregarMascotas, fabAgregarCitas;
     Button btn;
     Bundle parametros = new Bundle();
     ListView ltsCitas;
@@ -71,9 +71,12 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNav = findViewById(R.id.bottom_nav);
 
+        fabAgregarCitas = findViewById(R.id.fabAgregarCitasMascotas);
+
         //Listo por defecto
-        fab = findViewById(R.id.fabAgregarMascotas);
-        fab.setOnClickListener(view->abrirAgregarMascotas());
+        fabAgregarMascotas = findViewById(R.id.fabAgregarMascotas);
+        fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
+
 
         parametros.putString("accion", "nuevo");
 
@@ -86,8 +89,13 @@ public class MainActivity extends AppCompatActivity {
                 layout_veterinarios.setVisibility(View.GONE);
                 layout_cuenta.setVisibility(View.GONE);
 
-                fab = findViewById(R.id.fabAgregarMascotas);
-                fab.setOnClickListener(view->abrirAgregarMascotas());
+/*                fab = findViewById(R.id.fabAgregarMascotas);
+                //fab.setVisibility(View.VISIBLE);
+                fab.setOnClickListener(view->abrirAgregarMascotas());*/
+                fabAgregarMascotas.setVisibility(View.VISIBLE);
+                fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
+                fabAgregarCitas.setVisibility(View.GONE);
+
 
                 return true;
             }else if (item.getItemId() == R.id.chatMenu) {
@@ -97,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
                 layout_veterinarios.setVisibility(View.GONE);
                 layout_cuenta.setVisibility(View.GONE);
 
+                //Los fabs desaparecen
+                fabAgregarMascotas.setVisibility(View.GONE);
+                fabAgregarCitas.setVisibility(View.GONE);
+
                 return true;
             }else if (item.getItemId() == R.id.citasMenu) {
                 layout_mascotas.setVisibility(View.GONE);
@@ -105,8 +117,11 @@ public class MainActivity extends AppCompatActivity {
                 layout_veterinarios.setVisibility(View.GONE);
                 layout_cuenta.setVisibility(View.GONE);
 
-                fab = findViewById(R.id.fabAgregarCitasMascotas);
-                fab.setOnClickListener(view->abrirVentana());
+/*                fab = findViewById(R.id.fabAgregarCitasMascotas);
+                fab.setOnClickListener(view->abrirVentana());*/
+                fabAgregarCitas.setVisibility(View.VISIBLE);
+                fabAgregarCitas.setOnClickListener(view->abrirVentana());
+                fabAgregarMascotas.setVisibility(View.GONE);
 
                 return true;
             } else if (item.getItemId() == R.id.veterinariosMenu) {
@@ -115,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
                 layout_citas.setVisibility(View.GONE);
                 layout_veterinarios.setVisibility(View.VISIBLE);
                 layout_cuenta.setVisibility(View.GONE);
+                //Los fabs desaparecen
+                fabAgregarMascotas.setVisibility(View.GONE);
+                fabAgregarCitas.setVisibility(View.GONE);
+
                 return true;
             } else if (item.getItemId() == R.id.cuentaMenu){
                     layout_mascotas.setVisibility(View.GONE);
@@ -128,6 +147,9 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(this, Login.class);
                         startActivity(intent);
                     });
+                //Los fabs desaparecen
+                fabAgregarMascotas.setVisibility(View.GONE);
+                fabAgregarCitas.setVisibility(View.GONE);
                     return true;
             }
             return false;
@@ -150,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     /////////////////////////////////////////
+    //LA FUNCIÓN MSJ SIRVE PARA AMBOS
     private void mostrarMsg(String msg){
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
@@ -167,10 +190,11 @@ public class MainActivity extends AppCompatActivity {
             mostrarMsg("Error: " + e.getMessage());
         }
     }
+    //La función de menu sirve para mascotas y citas SI LO PUEDES REFACTORIZAR HAZLO
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         
-        if(item.getItemId() == R.id.mascotasMenu){
+        if(layout_mascotas.getVisibility() == View.VISIBLE){
             try {
                 if (item.getItemId() == R.id.mnxNuevo) {
                     parametros.putString("accion", "nuevo");
@@ -187,12 +211,12 @@ public class MainActivity extends AppCompatActivity {
                     obtenerDatosMascotas();
                     buscarMascotas();
                 }
-                return true;
+                //return true;
             } catch (Exception e) {
                 mostrarMsg("Error: " + e.getMessage());
                 return super.onContextItemSelected(item);
             }
-        }else if(item.getItemId() == R.id.citasMenu){
+        }else if(layout_citas.getVisibility() == View.VISIBLE){
             //menu de citas
             try{
                 if( item.getItemId()==R.id.mnxNuevo){
@@ -206,13 +230,13 @@ public class MainActivity extends AppCompatActivity {
                     obtenerDatosCitas();
                     buscarCitas();
                 }
-                return true;
+                //return true;
             }catch (Exception e){
                 mostrarMsg("Error: " + e.getMessage());
                 return super.onContextItemSelected(item);
             }
         }
-
+        return true;
     }
     private void eliminarCita(){
         try{
@@ -262,8 +286,11 @@ public class MainActivity extends AppCompatActivity {
                 }while(cCitas.moveToNext());
                 mostrarDatosCitas();
             }else{
-                mostrarMsg("No hay citas registrados.");
-                abrirVentana();
+                if(layout_citas.getVisibility() == View.VISIBLE){
+                    mostrarMsg("No hay citas registrados.");
+                    abrirVentana();
+                }
+
             }
         }catch (Exception e){
             mostrarMsg("Error: " + e.getMessage());
@@ -330,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //Para mascotas
+    //AQUI COMIENZA PARA MASCOTAS
     private void obtenerDatosMascotas(){
         try{
             db = new DB(this);
@@ -355,7 +382,10 @@ public class MainActivity extends AppCompatActivity {
                 mostrarMascotas();
 
             }else {
-                mostrarMsg("No hay mascotas registrados.");
+                if(layout_mascotas.getVisibility() == View.VISIBLE){
+                    mostrarMsg("No hay mascotas registrados.");
+                    abrirAgregarMascotas();
+                }
 
             }
         }catch (Exception e){
@@ -485,8 +515,8 @@ public class MainActivity extends AppCompatActivity {
             String idMascota = jsonArray.getJSONObject(posicion).getString("idMascota");
             String respuesta = db.administrar_Mascota("eliminar", new String[]{idMascota});
             if (respuesta.equals("ok")) {
-                mostrarMsg("Registro eliminada.");
                 obtenerDatosMascotas();
+                mostrarMsg("Registro eliminada.");
             } else {
                 mostrarMsg("Error: " + respuesta);
             }
@@ -498,5 +528,3 @@ public class MainActivity extends AppCompatActivity {
 
 }
 
-
-}
