@@ -6,48 +6,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_fondo"
-    tools:context=".agregar_citas">
-
+    tools:context=".agregar_chat">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/CvCitas"
+        android:id="@+id/CvChats"
         android:layout_width="400dp"
-        android:layout_height="480dp"
+        android:layout_height="530dp"
         android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
         android:backgroundTint="#FFB222"
         app:cardCornerRadius="@android:dimen/app_icon_size">
 
-        <ImageButton
-            android:id="@+id/imgFotoMascotaCita"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            android:layout_marginStart="150dp"
-            android:src="@mipmap/ic_launcher_round" />
-
         <TextView
-            android:id="@+id/lblTituloCitas"
+            android:id="@+id/lblTituloChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/color_menu"
             android:gravity="center_horizontal"
-            android:text="Citas"
+            android:text="Chats"
             android:textColor="@color/color_letras"
             android:textSize="50dp" />
 
-
-
-<!--        <TextView
-            android:id="@+id/lblCitas"
+        <ImageButton
+            android:id="@+id/imgFotoMascotaChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="90dp"
-            android:text="Control de mascotas"
-            android:textSize="21sp" />-->
+            android:layout_marginStart="150dp"
+            android:layout_marginTop="80dp"
+            android:src="@mipmap/ic_launcher_round" />
+
         <TextView
-            android:id="@+id/lblCitaMascota"
+            android:id="@+id/lblChatMascota"
             android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -55,13 +44,13 @@
             android:text="Nombre: "
             android:textSize="21sp" />
         <EditText
-            android:id="@+id/txtNombreCitaMascota"
+            android:id="@+id/txtNombreChatMascota"
             android:layout_width="254dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="200dp"
             android:layout_marginStart="130dp"
-            android:hint="Nombre de la mascota"
+            android:hint="Nombre"
             android:maxLines="1"
             android:ellipsize="end"
             android:singleLine="true"/>
@@ -69,31 +58,31 @@
         android:singleLine="true"
         android:ellipsize="end"-->
 
-<!--        <Spinner
-            android:id="@+id/spnNombreMascota"
-            android:layout_width="254dp"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="130dp"
-            android:layout_marginTop="207dp" />-->
+        <!--        <Spinner
+                    android:id="@+id/spnNombreMascota"
+                    android:layout_width="254dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="130dp"
+                    android:layout_marginTop="207dp" />-->
 
         <TextView
-            android:id="@+id/lblFecha"
-            android:layout_width="95dp"
+            android:id="@+id/lblDirecion"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="250dp"
-            android:text="Fecha: "
+            android:text="Direción: "
             android:textSize="21sp" />
 
         <EditText
-            android:id="@+id/txtFecha"
+            android:id="@+id/txtDirecion"
             android:layout_width="254dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="250dp"
             android:layout_marginStart="130dp"
-            android:hint="Fecha de consulta"
+            android:hint="Direción"
             android:maxLines="1"
             android:ellipsize="end"
             android:singleLine="true"/>
@@ -103,22 +92,22 @@
 
 
         <TextView
-            android:id="@+id/lblClinica"
-            android:layout_width="95dp"
+            android:id="@+id/lblTelefono"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="300dp"
-            android:text="Clinica: "
+            android:text="Teléfono: "
             android:textSize="21sp" />
 
         <EditText
-            android:id="@+id/txtNombreClinica"
+            android:id="@+id/txtTelefono"
             android:layout_width="254dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="300dp"
             android:layout_marginStart="130dp"
-            android:hint="Nombre de la clinica"
+            android:hint="Teléfono "
             android:maxLines="1"
             android:ellipsize="end"
             android:singleLine="true"/>
@@ -127,24 +116,47 @@
         android:ellipsize="end"-->
 
 
-
         <TextView
-            android:id="@+id/lblNota"
+            android:id="@+id/lblEmail"
             android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="350dp"
-            android:text="Notas: "
+            android:text="Email: "
             android:textSize="21sp" />
 
         <EditText
-            android:id="@+id/txtNota"
+            android:id="@+id/txtEmail"
             android:layout_width="254dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="350dp"
             android:layout_marginStart="130dp"
-            android:hint="Detalles de la consulta"
+            android:hint="Email"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:singleLine="true"/>
+        <!--android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:ellipsize="end"-->
+
+        <TextView
+            android:id="@+id/lblDui"
+            android:layout_width="95dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="400dp"
+            android:text="Dui: "
+            android:textSize="21sp" />
+
+        <EditText
+            android:id="@+id/txtDui"
+            android:layout_width="254dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="400dp"
+            android:layout_marginStart="130dp"
+            android:hint="Dui"
             android:maxLines="1"
             android:ellipsize="end"
             android:singleLine="true"/>
@@ -154,24 +166,25 @@
 
 
         <Button
-            android:id="@+id/btnGuardarCita"
+            android:id="@+id/btnGuardarChat"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtNota"
-            android:layout_marginTop="410dp"
+            android:layout_marginTop="460dp"
             android:layout_centerHorizontal="true"
-            android:text="Guardar cita"
+            android:text="Guardar chat"
             android:backgroundTint="@color/color_btn"
             android:textColor="@color/black"
             android:layout_marginStart="50dp"
             android:textSize="20sp"
             />
 
+
     </androidx.cardview.widget.CardView>
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabListaCitasMascotas"
+        android:id="@+id/fabListaChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

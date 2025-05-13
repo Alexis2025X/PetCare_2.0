@@ -98,7 +98,6 @@ public class agregar_citas extends AppCompatActivity {
     private void abrirVentana() {
 
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("layout_citas", 2);
         intent.putExtras(parametros);
         startActivity(intent);
 

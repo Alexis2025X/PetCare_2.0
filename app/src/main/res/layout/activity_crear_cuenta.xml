@@ -44,7 +44,13 @@
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
-        android:hint="Usuario" />
+        android:hint="Usuario"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:singleLine="true"/>
+    <!--android:scrollHorizontally="true"
+    android:singleLine="true"
+    android:ellipsize="end"-->
 
     <EditText
         android:id="@+id/txtPassword"
@@ -54,8 +60,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:textAlignment="center"
-        android:hint="Contraseña" />
-
+        android:hint="Contraseña"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:singleLine="true"/>
+    <!--android:scrollHorizontally="true"
+    android:singleLine="true"
+    android:ellipsize="end"-->
 
     <EditText
         android:id="@+id/txtCorreo"
@@ -65,7 +76,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:textAlignment="center"
-        android:hint="Correo" />
+        android:hint="Correo"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:singleLine="true"/>
+    <!--android:scrollHorizontally="true"
+    android:singleLine="true"
+    android:ellipsize="end"-->
 
 
 
