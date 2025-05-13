@@ -60,11 +60,7 @@ public class agregar_citas extends AppCompatActivity {
             Bundle parametros = getIntent().getExtras();
             accion = parametros.getString("accion");
 
-//            jsonObject.put("idCitas", cCitas.getString(0));
-//            jsonObject.put("nombre", cCitas.getString(1));
-//            jsonObject.put("fecha", cCitas.getString(2));
-//            jsonObject.put("clinica", cCitas.getString(3));
-//            jsonObject.put("nota", cCitas.getString(4));
+
             if (accion.equals("modificar")) {
                 JSONObject datos = new JSONObject(parametros.getString("citas"));
 
@@ -100,9 +96,12 @@ public class agregar_citas extends AppCompatActivity {
         }
     }
     private void abrirVentana() {
+
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("layout_citas", 2);
         intent.putExtras(parametros);
         startActivity(intent);
+
     }
     private void guardarCita(){
 
