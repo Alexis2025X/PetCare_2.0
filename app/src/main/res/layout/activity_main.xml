@@ -137,7 +137,7 @@
             android:layout_height="match_parent"
             tools:context=".MapsActivity" />-->
 
-        <TextView
+<!--        <TextView
             android:id="@+id/lblLatitud"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -147,25 +147,26 @@
             android:id="@+id/lblLongitud"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Longitud: " />
+            android:text="Longitud: " />-->
         <TextView
             android:id="@+id/lblUbicacion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mi ubicación: " />
-
+            android:text="Mi ubicación: Obteniendo ubicación... " />
         <fragment
             android:id="@+id/mapa"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="553dp"
-            android:layout_marginTop="40dp"
+            android:layout_height="650dp"
+            android:layout_alignBottom="@+id/layout_veterinarios"
+            android:layout_marginTop="0dp"
             map:cameraZoom="10"
             map:uiRotateGestures="true"
             map:uiZoomGestures="true"
-            tools:context=".MainActivity" />
+            tools:context=".MainActivity"/>
         <!--        map:uiScrollGestures="true"-->
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/layout_cuenta"
