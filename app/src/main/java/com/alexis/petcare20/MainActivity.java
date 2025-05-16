@@ -3,6 +3,10 @@ package com.alexis.petcare20;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,22 +21,36 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
    // private LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     BottomNavigationView bottomNav;
-    FloatingActionButton fabAgregarMascotas, fabAgregarCitas, fabAgregarChat;
+    FloatingActionButton fabAgregarMascotas;
+    FloatingActionButton fabAgregarCitas;
+    FloatingActionButton fabAgregarChat;
     Button btn;
     Bundle parametros = new Bundle();
     ListView ltsCitas;
@@ -45,24 +63,25 @@ public class MainActivity extends AppCompatActivity {
     JSONObject jsonObject;
     citas misCitas;
 //Para mascotas
-
-    //JSONArray jsonArray;
     final ArrayList<mascotas> alMascotas = new ArrayList<mascotas>();
     final ArrayList<mascotas> alMascotasCopia = new ArrayList<mascotas>();
     ListView ltsMascotas;
     Cursor cMascotas;
-    //JSONObject jsonObject;
     mascotas misMascotas;
-    //int posicion = 0;
-    //Bundle parametros = new Bundle();
-    //DB db;
+//Para el mapa
+    TextView tempVal;
+    TextView lblUbicacion, lblLatitud, lblLongitud;
+    GoogleMap mMap;
+    LocationManager locationManager;
+    LocationListener locationListener;
+    //Location currentLocation;
+    private Marker marcadorUbicacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        //Para las vistas
         layout_mascotas = findViewById(R.id.layout_mascotas);
         layout_chat = findViewById(R.id.layout_chat);
         layout_citas = findViewById(R.id.layout_citas);
@@ -161,13 +180,25 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
-        obtenerDatosCitas();
-        buscarCitas();
+
         //para mascotas
         obtenerDatosMascotas();
         buscarMascotas();
+        //Para citas
+        obtenerDatosCitas();
+        buscarCitas();
+        //Para el mapa
+
+        lblUbicacion = findViewById(R.id.lblUbicacion);
+        lblLatitud = findViewById(R.id.lblLatitud);
+        lblLongitud = findViewById(R.id.lblLongitud);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa);
+        mapFragment.getMapAsync(this);
+
+        obtenerPosicion();
 
     }
+
     private void abrirVentana(){
         Intent intent = new Intent(this, agregar_citas.class);
         intent.putExtras(parametros);
@@ -426,7 +457,6 @@ public class MainActivity extends AppCompatActivity {
                             jsonObject.getString("raza"),
                             jsonObject.getString("problemas_medicos"),
                             jsonObject.getString("foto")
-
                     );
 
 
@@ -536,7 +566,103 @@ public class MainActivity extends AppCompatActivity {
             mostrarMsg("Error: " + e.getMessage());
         }
     }
+    void obtenerPosicion(){
+        try{
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != getPackageManager().PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != getPackageManager().PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                tempVal.setText("Solicitando permisos de ubicación...");
+            }
+            locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    LatLng miUbicacion = new LatLng(location.getLatitude(), location.getLongitude());//Obtengo la ubicación
+                    //Creamos el marcados solo la primera vez
+                    if(marcadorUbicacion == null){
+                        marcadorUbicacion = mMap.addMarker(new MarkerOptions().position(miUbicacion).title("Mi ubicación").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                    } else {
+                    // Actualizar posición del marcador existente
+                    marcadorUbicacion.setPosition(miUbicacion);
+                    }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(miUbicacion));
+                    //Circulo alrededor de la ubicación
+                    Circle circle = mMap.addCircle(new CircleOptions()
+                            .center(miUbicacion)
+                            .radius(1000*5) //mt->km
+                            .strokeColor(Color.BLUE) // Color del borde
+                            .strokeWidth(2f) // Ancho del borde
+                            .fillColor(Color.argb(20, 0, 100, 255)) // Color de relleno (transparente)
+                    );
+                    //mMap.addMarker(new MarkerOptions().position(miUbicacion).title("Mi ubicación"));
+                    mostrarUbicacion(location);
+                }
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                    tempVal.setText("Estado del proveedor: "+ status);
+                }
+                @Override
+                public void onProviderEnabled(String provider) {
+                    tempVal.setText("Proveedor habilitado: "+ provider);
+                }
+                @Override
+                public void onProviderDisabled(String provider) {
+                    tempVal.setText("Proveedor deshabilitado: "+ provider);
+                }
+            };
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        }catch (SecurityException e){
+            tempVal.setText("Error al obtener la ubicación: "+ e.getMessage());
+        }
+    }
 
 
+
+
+
+    void mostrarUbicacion(Location location){
+        lblUbicacion.setText("Mi ubicación: "+"\nLatitud: "+ location.getLatitude() + "\nLongitud: "+ location.getLongitude() + "\nAltitud: "+ location.getAltitude());
+/*        lblUbicacion.setText("Mi ubicación: "+"\nLatitud: "+ latitud + "\nLongitud: "+ longitud);
+        latitud = location.getLatitude();
+        longitud = location.getLongitude();*/
+    }
+
+    //Parte del mapa
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+
+        mMap = googleMap;
+        this.mMap.setOnMapClickListener(this);
+        this.mMap.setOnMapLongClickListener(this);
+
+        //LatLng ElSalvador = new LatLng(13.3432943,-88.4530736);
+        //mMap.addMarker(new MarkerOptions().position(ElSalvador).title("Ubicación de El Salvador"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(ElSalvador));//actualiza el mapa a ubicación indicada
+    }
+    //Por si solo hay un click corto
+
+    @Override
+    public void onMapClick(@NonNull LatLng latLng) {
+        lblLatitud.setText("Latitud: " +""+ latLng.latitude);
+        lblLongitud.setText("Longitud: "+""+ latLng.longitude);
+
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions().position(latLng).title("Ubicación seleccionada"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        //Para mostrar la ubicación actual
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        obtenerPosicion();
+    }
+    //Por si hay un click largo
+    @Override
+    public void onMapLongClick(@NonNull LatLng latLng) {
+        lblLatitud.setText(""+ latLng.latitude);
+        lblLongitud.setText(""+ latLng.longitude);
+        mMap.addMarker(new MarkerOptions().position(latLng).title("Ubicación seleccionada"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+
+    }
 }
 

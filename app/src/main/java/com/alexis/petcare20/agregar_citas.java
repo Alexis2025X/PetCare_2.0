@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,6 +31,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class agregar_citas extends AppCompatActivity {
+/*    private MainActivity mainActivity; // Referencia a MainActivity
+
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+    }*/
     FloatingActionButton fab;
     Button btn;
 //    TextView tempVal;
@@ -100,6 +106,11 @@ public class agregar_citas extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtras(parametros);
         startActivity(intent);
+/*        mainActivity.layout_mascotas.setVisibility(View.GONE);
+        mainActivity.layout_cuenta.setVisibility(View.GONE);
+        mainActivity.layout_chat.setVisibility(View.GONE);
+        mainActivity.layout_veterinarios.setVisibility(View.GONE);
+        mainActivity.layout_citas.setVisibility(View.VISIBLE);*/
 
     }
     private void guardarCita(){
