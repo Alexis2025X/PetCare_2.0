@@ -50,7 +50,12 @@
         android:layout_marginTop="300dp"
         android:layout_centerHorizontal="true"
         android:drawableStart="@drawable/user"
-        />
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:singleLine="true"/>
+    <!--android:scrollHorizontally="true"
+    android:singleLine="true"
+    android:ellipsize="end"-->
 
     <!-- Campo de texto para la contraseña -->
     <EditText
@@ -63,7 +68,13 @@
         android:minHeight="48dp"
         android:layout_marginTop="380dp"
         android:layout_centerHorizontal="true"
-        android:drawableStart="@drawable/candado"/>
+        android:drawableStart="@drawable/candado"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:singleLine="true"/>
+    <!--android:scrollHorizontally="true"
+    android:singleLine="true"
+    android:ellipsize="end"-->
 
     <!-- Botón para iniciar sesión -->
     <Button

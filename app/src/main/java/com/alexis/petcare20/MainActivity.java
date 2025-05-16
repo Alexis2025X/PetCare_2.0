@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
    // private LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     BottomNavigationView bottomNav;
-    FloatingActionButton fab, fabAgregarMascotas, fabAgregarCitas;
+    FloatingActionButton fabAgregarMascotas, fabAgregarCitas, fabAgregarChat;
     Button btn;
     Bundle parametros = new Bundle();
     ListView ltsCitas;
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNav = findViewById(R.id.bottom_nav);
 
         fabAgregarCitas = findViewById(R.id.fabAgregarCitasMascotas);
+        fabAgregarChat = findViewById(R.id.fabAgregarChat);
 
         //Listo por defecto
         fabAgregarMascotas = findViewById(R.id.fabAgregarMascotas);
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 fabAgregarMascotas.setVisibility(View.VISIBLE);
                 fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
                 fabAgregarCitas.setVisibility(View.GONE);
+                fabAgregarChat.setVisibility(View.GONE);
 
 
                 return true;
@@ -106,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
                 layout_cuenta.setVisibility(View.GONE);
 
                 //Los fabs desaparecen
+                fabAgregarChat.setVisibility(View.VISIBLE);
+                fabAgregarChat.setOnClickListener(view->abrirAgregarChat());
                 fabAgregarMascotas.setVisibility(View.GONE);
                 fabAgregarCitas.setVisibility(View.GONE);
 
@@ -119,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
 /*                fab = findViewById(R.id.fabAgregarCitasMascotas);
                 fab.setOnClickListener(view->abrirVentana());*/
+                fabAgregarChat.setVisibility(View.GONE);
                 fabAgregarCitas.setVisibility(View.VISIBLE);
                 fabAgregarCitas.setOnClickListener(view->abrirVentana());
                 fabAgregarMascotas.setVisibility(View.GONE);
@@ -131,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 layout_veterinarios.setVisibility(View.VISIBLE);
                 layout_cuenta.setVisibility(View.GONE);
                 //Los fabs desaparecen
+                fabAgregarChat.setVisibility(View.GONE);
                 fabAgregarMascotas.setVisibility(View.GONE);
                 fabAgregarCitas.setVisibility(View.GONE);
 
@@ -148,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                     });
                 //Los fabs desaparecen
+                fabAgregarChat.setVisibility(View.GONE);
                 fabAgregarMascotas.setVisibility(View.GONE);
                 fabAgregarCitas.setVisibility(View.GONE);
                     return true;
@@ -168,6 +175,11 @@ public class MainActivity extends AppCompatActivity {
     }
     private void abrirAgregarMascotas(){
         Intent intent = new Intent(this, agregar_mascotas.class);
+        intent.putExtras(parametros);
+        startActivity(intent);
+    }
+    private void abrirAgregarChat(){
+        Intent intent = new Intent(this, agregar_chat.class);
         intent.putExtras(parametros);
         startActivity(intent);
     }

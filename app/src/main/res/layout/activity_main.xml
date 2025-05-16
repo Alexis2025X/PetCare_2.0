@@ -8,13 +8,15 @@
     android:background="@color/color_fondo"
     tools:context=".MainActivity">
 
-    <LinearLayout
+
+
+       <LinearLayout
         android:id="@+id/layout_mascotas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_nav"
         android:orientation="vertical"
-        android:visibility="visible">  <!-- Vista inicial visible -->
+        android:visibility="visible">  <!--Vista inicial visible-->
 
         <EditText
             android:id="@+id/txtBuscarMascotas"
@@ -33,7 +35,7 @@
 
 
     </LinearLayout>
-    <!-- android:layout_marginTop="-100dp"-->
+<!--   android:layout_marginTop="-100dp"-->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAgregarMascotas"
         android:layout_width="wrap_content"
@@ -45,7 +47,7 @@
         android:layout_marginBottom="55dp"
         android:backgroundTint="@color/color_menu"
         android:src="@android:drawable/ic_input_add"
-        android:visibility="visible"/>
+        android:visibility="visible"/>-->
 
     <LinearLayout
         android:id="@+id/layout_chat"
@@ -55,13 +57,31 @@
         android:orientation="vertical"
         android:visibility="gone">  <!-- Vista inicial visible -->
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="chat"
-            android:textSize="24sp"/>
+        <EditText
+            android:id="@+id/txtBuscarChats"
+            android:drawableEnd="@drawable/lupa"
+            android:hint="Buscar chats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <ListView
+            android:id="@+id/ltsChat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="-1dp" />
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAgregarChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/layout_chat"
+        android:layout_marginStart="320dp"
+        android:layout_marginTop="520dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginBottom="55dp"
+        android:backgroundTint="@color/color_menu"
+        android:src="@android:drawable/ic_input_add"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/layout_citas"
@@ -149,16 +169,22 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="140dp"
                 android:text="Usuario: "
-                android:textSize="25sp" />
+                android:textSize="21sp" />
 
             <EditText
                 android:id="@+id/txtUsuario"
-                android:layout_width="254dp"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="140dp"
-                android:layout_marginStart="130dp"
-                android:hint="my_user" />
+                android:layout_marginStart="140dp"
+                android:hint="my_user"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+            <!--android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:ellipsize="end"-->
 
             <TextView
                 android:id="@+id/lblNombreUsuario"
@@ -167,35 +193,47 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="200dp"
                 android:text="Nombre: "
-                android:textSize="25sp" />
+                android:textSize="21sp" />
 
             <EditText
                 android:id="@+id/txtNombreUsuario"
-                android:layout_width="254dp"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="200dp"
-                android:layout_marginStart="130dp"
-                android:hint="Mario" />
+                android:layout_marginStart="140dp"
+                android:hint="Mario"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+            <!--android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:ellipsize="end"-->
 
 
             <TextView
                 android:id="@+id/lblClinica"
-                android:layout_width="170dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="250dp"
                 android:text="Contraseña: "
-                android:textSize="25sp" />
+                android:textSize="21sp" />
 
             <EditText
                 android:id="@+id/txtNombreClinica"
-                android:layout_width="200dp"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="180dp"
+                android:layout_marginStart="140dp"
                 android:layout_marginTop="250dp"
-                android:hint="********" />
+                android:hint="********"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+            <!--android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:ellipsize="end"-->
 
             <TextView
                 android:id="@+id/lblEmail"
@@ -204,28 +242,53 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="300dp"
                 android:text="Email: "
-                android:textSize="25sp" />
+                android:textSize="21sp" />
 
             <EditText
                 android:id="@+id/txtEmail"
-                android:layout_width="254dp"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="300dp"
-                android:layout_marginStart="130dp"
+                android:layout_marginStart="140dp"
                 android:layout_marginBottom="30dp"
-                android:hint="mar@gmail.com" />
+                android:hint="mar@gmail.com"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+            <!--android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:ellipsize="end"-->
 
         </androidx.cardview.widget.CardView>
+        <Button
+            android:id="@+id/btnEditarCuenta"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="30dp"
+            android:text="Editar cuenta"
+            android:backgroundTint="@color/color_menu"
+            android:textColor="@color/color_letras" />
+        <Button
+            android:id="@+id/btnEliminarCuenta"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-49dp"
+            android:layout_marginStart="225dp"
+            android:text="Eliminar cuenta"
+            android:backgroundTint="@color/color_menu"
+            android:textColor="@color/color_letras" />
         <Button
             android:id="@+id/btnCerrarSesion"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="20dp"
             android:layout_marginStart="50dp"
             android:text="Cerrar sesión"
             android:backgroundTint="@color/color_menu"
             android:textColor="@color/color_letras" />
+
 
 
     </LinearLayout>
