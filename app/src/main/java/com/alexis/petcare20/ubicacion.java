@@ -7,17 +7,21 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 public class ubicacion extends MainActivity {
+
 
 /*    private Context context;
     public ubicacion(Context context) {
         this.context = context;
     }*/
 
-    void obtenerPosicion(){
+/*    void obtenerPosicion(){
         try{
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != getPackageManager().PERMISSION_GRANTED &&
@@ -51,5 +55,5 @@ public class ubicacion extends MainActivity {
     void mostrarUbicacion(Location location){
         lblUbicacion = findViewById(R.id.lblUbicacion);
         lblLatitud.setText("Latitud: "+ location.getLatitude() + "\nLongitud: "+ location.getLongitude() + "\nAltitud: "+ location.getAltitude());
-    }
+    }*/
 }

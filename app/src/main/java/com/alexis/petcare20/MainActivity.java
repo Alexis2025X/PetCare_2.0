@@ -1,6 +1,5 @@
 package com.alexis.petcare20;
 
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,7 +9,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,45 +30,58 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
    // private LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     BottomNavigationView bottomNav;
-    FloatingActionButton fabAgregarMascotas;
-    FloatingActionButton fabAgregarCitas;
-    FloatingActionButton fabAgregarChat;
     Button btn;
     Bundle parametros = new Bundle();
-    ListView ltsCitas;
-    Cursor cCitas;
-    DB db;
+    JSONArray jsonArray, jsonArrayMascotas;
+    JSONArray jsonArrayChats = new JSONArray();
+    JSONObject jsonObject;
     int posicion = 0;
+    DB db;
+    String miToken = "";
+    detectarInternet di;
+    FloatingActionButton fabAgregarCitas, fabAgregarMascotas, fabAgregarChat;
+    ListView ltsCitas, ltsMascotas, ltsChat;
+    Cursor cCitas, cMascotas, cChat;
+
+    //Para Citas
     final ArrayList<citas> alCitas = new ArrayList<citas>();
     final ArrayList<citas> alCitasCopia = new ArrayList<citas>();
-    JSONArray jsonArray;
-    JSONObject jsonObject;
     citas misCitas;
+
 //Para mascotas
     final ArrayList<mascotas> alMascotas = new ArrayList<mascotas>();
     final ArrayList<mascotas> alMascotasCopia = new ArrayList<mascotas>();
-    ListView ltsMascotas;
-    Cursor cMascotas;
     mascotas misMascotas;
+    //Para chats
+    final ArrayList<chats> alChat = new ArrayList<chats>();
+    final ArrayList<chats> alChatCopia = new ArrayList<chats>();
+    chats misChat;
+    DatabaseReference databaseReference;
 //Para el mapa
     TextView tempVal;
     TextView lblUbicacion, lblLatitud, lblLongitud;
@@ -86,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Para las vistas
         layout_mascotas = findViewById(R.id.layout_mascotas);
         layout_chat = findViewById(R.id.layout_chat);
@@ -101,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //Listo por defecto
         fabAgregarMascotas = findViewById(R.id.fabAgregarMascotas);
         fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
-
 
         parametros.putString("accion", "nuevo");
 
@@ -121,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
                 fabAgregarCitas.setVisibility(View.GONE);
                 fabAgregarChat.setVisibility(View.GONE);
-
 
                 return true;
             }else if (item.getItemId() == R.id.chatMenu) {
@@ -146,10 +156,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 layout_cuenta.setVisibility(View.GONE);
 
 /*                fab = findViewById(R.id.fabAgregarCitasMascotas);
-                fab.setOnClickListener(view->abrirVentana());*/
+                fab.setOnClickListener(view->abrirAgregarCitas());*/
                 fabAgregarChat.setVisibility(View.GONE);
                 fabAgregarCitas.setVisibility(View.VISIBLE);
-                fabAgregarCitas.setOnClickListener(view->abrirVentana());
+                fabAgregarCitas.setOnClickListener(view->abrirAgregarCitas());
                 fabAgregarMascotas.setVisibility(View.GONE);
 
                 return true;
@@ -182,10 +192,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 fabAgregarChat.setVisibility(View.GONE);
                 fabAgregarMascotas.setVisibility(View.GONE);
                 fabAgregarCitas.setVisibility(View.GONE);
-                    return true;
+                return true;
             }
             return false;
         });
+
 
         //para mascotas
         obtenerDatosMascotas();
@@ -193,19 +204,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //Para citas
         obtenerDatosCitas();
         buscarCitas();
-        //Para el mapa
+        //Para chats
+        listarDatos();
+        buscarChats();
+        //Para el mapa FIREBASE
 
         lblUbicacion = findViewById(R.id.lblUbicacion);
 /*        lblLatitud = findViewById(R.id.lblLatitud);
         lblLongitud = findViewById(R.id.lblLongitud);*/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa);
         mapFragment.getMapAsync(this);
-
         obtenerPosicion();
 
     }
 
-    private void abrirVentana(){
+    private void abrirAgregarCitas(){
         Intent intent = new Intent(this, agregar_citas.class);
         intent.putExtras(parametros);
         startActivity(intent);
@@ -230,181 +243,215 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.mi_menu, menu);
+        if(layout_chat.getVisibility() == View.VISIBLE) {
+            inflater.inflate(R.menu.mi_menu, menu);
+        } else if (layout_citas.getVisibility() == View.VISIBLE) {
+            inflater.inflate(R.menu.mi_menu_cita, menu);
+        }else if(layout_mascotas.getVisibility() == View.VISIBLE){
+        inflater.inflate(R.menu.mi_menu_mascota, menu);
+        }
         try {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             posicion = info.position;
-            menu.setHeaderTitle(jsonArray.getJSONObject(posicion).getString("nombre"));
+            if(layout_chat.getVisibility() == View.VISIBLE) {
+                menu.setHeaderTitle(jsonArrayChats.getJSONObject(posicion).getString("nombre"));
+            } else if (layout_citas.getVisibility() == View.VISIBLE) {
+                menu.setHeaderTitle(jsonArray.getJSONObject(posicion).getString("nombre"));
+            }else if(layout_mascotas.getVisibility() == View.VISIBLE){
+                menu.setHeaderTitle(jsonArrayMascotas.getJSONObject(posicion).getString("nombre"));
+            }
+
         } catch (Exception e) {
             mostrarMsg("Error: " + e.getMessage());
         }
     }
     //La función de menu sirve para mascotas y citas SI LO PUEDES REFACTORIZAR HAZLO
+
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        
-        if(layout_mascotas.getVisibility() == View.VISIBLE){
+        if(layout_mascotas.getVisibility() == View.VISIBLE) {
             try {
-                if (item.getItemId() == R.id.mnxNuevo) {
+                if (item.getItemId() == R.id.mnxNuevoMascota) {
                     parametros.putString("accion", "nuevo");
-                    abrirAgregarMascotas();
-                } else if (item.getItemId() == R.id.mnxModificar) {
-
+                        abrirAgregarMascotas();
+                } else if (item.getItemId() == R.id.mnxModificarMascota) {
                     parametros.putString("accion", "modificar");
-                    parametros.putString("mascotas", jsonArray.getJSONObject(posicion).toString());
-
+                    parametros.putString("mascotas", jsonArrayMascotas.getJSONObject(posicion).toString());
                     abrirAgregarMascotas();
 
-                } else if (item.getItemId() == R.id.mnxEliminar) {
+                } else if (item.getItemId() == R.id.mnxEliminarMascota) {
                     eliminarMascota();
                     obtenerDatosMascotas();
                     buscarMascotas();
                 }
-                //return true;
+                return true;
             } catch (Exception e) {
                 mostrarMsg("Error: " + e.getMessage());
                 return super.onContextItemSelected(item);
             }
-        }else if(layout_citas.getVisibility() == View.VISIBLE){
-            //menu de citas
-            try{
-                if( item.getItemId()==R.id.mnxNuevo){
-                    abrirVentana();
-                }else if( item.getItemId()==R.id.mnxModificar){
+        } else if (layout_citas.getVisibility() == View.VISIBLE) {
+            try {
+                if (item.getItemId() == R.id.mnxNuevoCita) {
+                    parametros.putString("accion", "nuevo");
+                    abrirAgregarCitas();
+                } else if (item.getItemId() == R.id.mnxModificarCita) {
                     parametros.putString("accion", "modificar");
                     parametros.putString("citas", jsonArray.getJSONObject(posicion).toString());
-                    abrirVentana();
-                } else if (item.getItemId()==R.id.mnxEliminar) {
+                    abrirAgregarCitas();
+                } else if (item.getItemId() == R.id.mnxEliminarCita) {
                     eliminarCita();
                     obtenerDatosCitas();
                     buscarCitas();
                 }
-                //return true;
-            }catch (Exception e){
+                return true;
+            } catch (Exception e) {
                 mostrarMsg("Error: " + e.getMessage());
                 return super.onContextItemSelected(item);
             }
-        }
-        return true;
-    }
-    private void eliminarCita(){
-        try{
-            String nombre = jsonArray.getJSONObject(posicion).getString("nombre");
-            AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
-            confirmacion.setTitle("Esta seguro de eliminar a: ");
-            confirmacion.setMessage(nombre);
-            confirmacion.setPositiveButton("Si", (dialog, which) -> {
-                try {
-                    String respuesta = db.administrar_Citas("eliminar", new String[]{jsonArray.getJSONObject(posicion).getString("idCitas")});
-                    if(respuesta.equals("ok")) {
-                        obtenerDatosCitas();
-                        mostrarMsg("Registro eliminado con exito");
-                    }else{
-                        mostrarMsg("Error: " + respuesta);
-                    }
-                }catch (Exception e){
-                    mostrarMsg("Error: " + e.getMessage());
+        } else if (layout_chat.getVisibility() == View.VISIBLE) {
+            try {
+                if (item.getItemId() == R.id.mnxNuevo) {
+                    parametros.putString("accion", "nuevo");
+                    abrirAgregarChat();
+                } else if (item.getItemId() == R.id.mnxModificar) {
+                    parametros.putString("accion", "modificar");
+                    parametros.putString("chat", jsonArrayChats.getJSONObject(posicion).toString());
+                    abrirAgregarChat();
+                } else if (item.getItemId() == R.id.mnxEliminar) {
+                    eliminarChat();
+                    listarDatos();
+                    buscarChats();
                 }
-            });
-            confirmacion.setNegativeButton("No", (dialog, which) -> {
-                dialog.dismiss();
-            });
-            confirmacion.create().show();
-        }catch (Exception e){
-            mostrarMsg("Error: " + e.getMessage());
+                return true;
+            } catch (Exception e) {
+                mostrarMsg("Error: " + e.getMessage());
+                return super.onContextItemSelected(item);
+            }
+        } else {
+            return super.onContextItemSelected(item);
         }
     }
 
-    private void obtenerDatosCitas(){
-        try{
-            cCitas = db.lista_Citas();
-            //mostrarMsg(cCitas.toString() + "buyftyf");
-            if(cCitas.moveToFirst()){
-                jsonArray = new JSONArray();
-                do{
-                    jsonObject = new JSONObject();
-                    jsonObject.put("idCitas", cCitas.getString(0));
-                    jsonObject.put("nombre", cCitas.getString(1));
-                    jsonObject.put("fecha", cCitas.getString(2));
-                    jsonObject.put("clinica", cCitas.getString(3));
-                    jsonObject.put("nota", cCitas.getString(4));
-                    jsonArray.put(jsonObject);
-
-                    //mostrarMsg(cCitas.getString(4) + "buyftyf");
-
-                }while(cCitas.moveToNext());
-                mostrarDatosCitas();
-            }else{
-                if(layout_citas.getVisibility() == View.VISIBLE){
-                    mostrarMsg("No hay citas registrados.");
-                    abrirVentana();
-                }
-
-            }
-        }catch (Exception e){
-            mostrarMsg("Error: " + e.getMessage());
-        }
-    }
-    private void mostrarDatosCitas(){
-        try{
-            if(jsonArray.length()>0){
-                ltsCitas = findViewById(R.id.ltsCitas);
-                alCitas.clear();
-                //alCitasCopia.clear();
-
-                for (int i=0; i<jsonArray.length(); i++){
-                    jsonObject = jsonArray.getJSONObject(i);
-                    misCitas = new citas(
-                            jsonObject.getString("idCitas"),
-                            jsonObject.getString("nombre"),
-                            jsonObject.getString("fecha"),
-                            jsonObject.getString("clinica"),
-                            jsonObject.getString("nota")
-                            //jsonObject.getString("foto")
-                    );
-                    alCitas.add(misCitas);
-                }
-                alCitasCopia.addAll(alCitas);
-                ltsCitas.setAdapter(new AdaptadorCitas(this, alCitas));
-                registerForContextMenu(ltsCitas);
-            }else{
-                mostrarMsg("No hay citas registrados.");
-                abrirVentana();
-            }
-        }catch (Exception e){
-            mostrarMsg("Error: " + e.getMessage());
-        }
-    }
-    private void buscarCitas(){
-        TextView tempVal = findViewById(R.id.txtBuscarCitas);
-        tempVal.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                alCitas.clear();
-                String buscar = tempVal.getText().toString().trim().toLowerCase();
-                if( buscar.length()<=0){
-                    alCitas.addAll(alCitasCopia);
-                }else{
-                    for (citas item: alCitasCopia){
-                        if(item.getnombreMascota().toLowerCase().contains(buscar) ||
-                                item.getfecha().toLowerCase().contains(buscar) ||
-                                item.getclinica().toLowerCase().contains(buscar)){
-                            alCitas.add(item);
+        private void eliminarCita () {
+            try {
+                String nombre = jsonArray.getJSONObject(posicion).getString("nombre");
+                AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
+                confirmacion.setTitle("Esta seguro de eliminar a: ");
+                confirmacion.setMessage(nombre);
+                confirmacion.setPositiveButton("Si", (dialog, which) -> {
+                    try {
+                        String respuesta = db.administrar_Citas("eliminar", new String[]{jsonArray.getJSONObject(posicion).getString("idCitas")});
+                        if (respuesta.equals("ok")) {
+                            obtenerDatosCitas();
+                            buscarCitas();
+                            mostrarMsg("Registro eliminado con exito");
+                        } else {
+                            mostrarMsg("Error: " + respuesta);
                         }
+                    } catch (Exception e) {
+                        mostrarMsg("Error: " + e.getMessage());
                     }
-                    ltsCitas.setAdapter(new AdaptadorCitas(getApplicationContext(), alCitas));
-                }
+                });
+                confirmacion.setNegativeButton("No", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+                confirmacion.create().show();
+            } catch (Exception e) {
+                mostrarMsg("Error: " + e.getMessage());
             }
-            @Override
-            public void afterTextChanged(Editable s) {
+        }
+        private void obtenerDatosCitas () {
+            try {
+                cCitas = db.lista_Citas();
+                //mostrarMsg(cCitas.toString() + "buyftyf");
+                if (cCitas.moveToFirst()) {
+                    jsonArray = new JSONArray();
+                    do {
+                        jsonObject = new JSONObject();
+                        jsonObject.put("idCitas", cCitas.getString(0));
+                        jsonObject.put("nombre", cCitas.getString(1));
+                        jsonObject.put("fecha", cCitas.getString(2));
+                        jsonObject.put("clinica", cCitas.getString(3));
+                        jsonObject.put("nota", cCitas.getString(4));
+                        jsonArray.put(jsonObject);
 
+                        //mostrarMsg(cCitas.getString(4) + "buyftyf");
+
+                    } while (cCitas.moveToNext());
+                    mostrarDatosCitas();
+                } else {
+                    if (layout_citas.getVisibility() == View.VISIBLE) {
+                        mostrarMsg("No hay citas registrados.");
+                        abrirAgregarCitas();
+                    }
+
+                }
+            } catch (Exception e) {
+                mostrarMsg("Error: " + e.getMessage());
             }
-        });
-    }
+        }
+        private void mostrarDatosCitas () {
+            try {
+                if (jsonArray.length() > 0) {
+                    ltsCitas = findViewById(R.id.ltsCitas);
+                    alCitas.clear();
+                    //alCitasCopia.clear();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        jsonObject = jsonArray.getJSONObject(i);
+                        misCitas = new citas(
+                                jsonObject.getString("idCitas"),
+                                jsonObject.getString("nombre"),
+                                jsonObject.getString("fecha"),
+                                jsonObject.getString("clinica"),
+                                jsonObject.getString("nota")
+                                //jsonObject.getString("foto")
+                        );
+                        alCitas.add(misCitas);
+                    }
+                    alCitasCopia.addAll(alCitas);
+                    ltsCitas.setAdapter(new AdaptadorCitas(this, alCitas));
+                    registerForContextMenu(ltsCitas);
+                } else {
+                    mostrarMsg("No hay citas registrados.");
+                    abrirAgregarCitas();
+                }
+            } catch (Exception e) {
+                mostrarMsg("Error: " + e.getMessage());
+            }
+        }
+        private void buscarCitas () {
+            TextView tempVal = findViewById(R.id.txtBuscarCitas);
+            tempVal.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    alCitas.clear();
+                    String buscar = tempVal.getText().toString().trim().toLowerCase();
+                    if (buscar.length() <= 0) {
+                        alCitas.addAll(alCitasCopia);
+                    } else {
+                        for (citas item : alCitasCopia) {
+                            if (item.getnombreMascota().toLowerCase().contains(buscar) ||
+                                    item.getfecha().toLowerCase().contains(buscar) ||
+                                    item.getclinica().toLowerCase().contains(buscar)) {
+                                alCitas.add(item);
+                            }
+                        }
+                        ltsCitas.setAdapter(new AdaptadorCitas(getApplicationContext(), alCitas));
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+        }
 
     //AQUI COMIENZA PARA MASCOTAS
     private void obtenerDatosMascotas(){
@@ -413,10 +460,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             cMascotas = db.lista_mascotas();
             if(cMascotas.moveToFirst()){
-                jsonArray = new JSONArray();
+                jsonArrayMascotas = new JSONArray();
                 do{
-
-
                     jsonObject = new JSONObject();
                     jsonObject.put("idMascota", cMascotas.getString(0));
                     jsonObject.put("dueño", cMascotas.getString(1));
@@ -425,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     jsonObject.put("raza", cMascotas.getString(4));
                     jsonObject.put("problemas_medicos", cMascotas.getString(5));
                     jsonObject.put("foto", cMascotas.getString(6));
-                    jsonArray.put(jsonObject);
+                    jsonArrayMascotas.put(jsonObject);
                 }while(cMascotas.moveToNext());
 
                 mostrarMascotas();
@@ -446,15 +491,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         try{
 
-            if(jsonArray.length()>0){
+            if(jsonArrayMascotas.length()>0){
 
                 ltsMascotas = findViewById(R.id.ltsMascotas);
                 alMascotas.clear();
 
                 alMascotasCopia.clear();
 
-                for (int i=0; i<jsonArray.length(); i++){
-                    jsonObject = jsonArray.getJSONObject(i);
+                for (int i=0; i<jsonArrayMascotas.length(); i++){
+                    jsonObject = jsonArrayMascotas.getJSONObject(i);
                     misMascotas = new mascotas(
                             jsonObject.getString("idMascota"),
                             jsonObject.getString("dueño"),
@@ -470,15 +515,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 alMascotasCopia.addAll(alMascotas);
                 ltsMascotas.setAdapter(new adaptadorMascotas(this,alMascotas));
-
                 registerForContextMenu(ltsMascotas);
 
             }else{
-                mostrarMsg("No hay amigos registrados.");
+                mostrarMsg("No hay chat registrados.");
 
             }
         }catch (Exception e){
-            mostrarMsg("Error: " + e.getMessage());
+            mostrarMsg("1 Error: " + e.getMessage());
         }
 
     }
@@ -531,7 +575,191 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mostrarMsg("Error: " + e.getMessage());
         }
     }
+    //AQUI COMIENZA PARA CHATS
+
+    private void listarDatos(){
+        try{
+            databaseReference  = FirebaseDatabase.getInstance().getReference("chats");
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(tarea->{
+                if(!tarea.isSuccessful()){
+                    mostrarMsg("Error al obtener token: "+tarea.getException().getMessage());
+                    return;
+                }else{
+                    miToken = tarea.getResult();
+                    if( miToken!=null && miToken.length()>0 ){
+                        databaseReference.orderByChild("miToken").equalTo(miToken).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                try{
+                                    if( snapshot.getChildrenCount()<=0 ){
+                                        parametros.putString("accion", "nuevo");
+                                        if(layout_chat.getVisibility() == View.VISIBLE){
+                                            mostrarMsg("1 No hay chats registrados.");
+                                            abrirAgregarChat();
+                                        }
+                                        //abrirAgregarChat();
+                                    }
+                                }catch (Exception e){
+                                    mostrarMsg("Error al llamar la ventana: " + e.getMessage());
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                mostrarMsg("Error se cancelo: " + error.getMessage());
+                            }
+                        });
+                    }
+                }
+            });
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    try{
+                        for( DataSnapshot dataSnapshot : snapshot.getChildren() ){
+                            chats chat = dataSnapshot.getValue(chats.class);
+                            jsonObject = new JSONObject();
+                            jsonObject.put("idChat", chat.getIdChat());
+                            jsonObject.put("nombre", chat.getNombre());
+                            jsonObject.put("direccion", chat.getDireccion());
+                            jsonObject.put("telefono", chat.getTelefono());
+                            jsonObject.put("email", chat.getEmail());
+                            jsonObject.put("dui", chat.getDui());
+                            jsonObject.put("urlCompletaFotoFirestore", chat.getUrlCompletaFotoFirestore());
+                            jsonObject.put("urlFoto", chat.getFoto());
+                            jsonObject.put("miToken", chat.getMiToken());
+
+                            jsonArrayChats.put(jsonObject);
+                        }
+                            mostrarDatosChats();
+
+                    }catch (Exception e){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle("Error");
+                        builder.setMessage("Error al obtener datos de firebase: " + e.getMessage());
+                        builder.setPositiveButton("Aceptar", null);
+                        builder.create().show();
+                        //mostrarMsg("Error al escuchar evento de firebase: " + e.getMessage());
+
+                        mostrarMsg(" firebase: " + e.getMessage());
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }catch (Exception e){
+            mostrarMsg("Error al listar datos: " + e.getMessage());
+        }
+    }
+    private void mostrarDatosChats(){
+        try{
+            if(jsonArrayChats.length()>0){
+                ltsChat = findViewById(R.id.ltsChat);
+                alChat.clear();
+                alChatCopia.clear();
+
+                for (int i=0; i<jsonArrayChats.length(); i++){
+                    jsonObject = jsonArrayChats.getJSONObject(i);
+                    misChat = new chats(
+                            jsonObject.getString("idChat"),
+                            jsonObject.getString("nombre"),
+                            jsonObject.getString("direccion"),
+                            jsonObject.getString("telefono"),
+                            jsonObject.getString("email"),
+                            jsonObject.getString("dui"),
+                            jsonObject.getString("urlFoto"),
+                            jsonObject.getString("urlCompletaFotoFirestore"),
+                            jsonObject.getString("miToken")
+                    );
+                    alChat.add(misChat);
+                }
+                    alChatCopia.addAll(alChat);
+                    ltsChat.setAdapter(new AdaptadorChats(this, alChat));
+                    registerForContextMenu(ltsChat);
+            }else{
+                if(layout_chat.getVisibility() == View.VISIBLE){
+                    mostrarMsg("No hay chats registrados.");
+                    abrirAgregarChat();
+                }
+            }
+        }catch (Exception e){
+            mostrarMsg("Error ID al mostrar: " + e.getMessage());
+        }
+    }
+    private void buscarChats(){
+        TextView tempVal = findViewById(R.id.txtBuscarChats);
+        tempVal.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                alChat.clear();
+                String buscar = tempVal.getText().toString().trim().toLowerCase();
+                if( buscar.length()<=0){
+                    alChat.addAll(alChatCopia);
+                }else{
+                    for (chats item: alChatCopia){
+                        if(item.getNombre().toLowerCase().contains(buscar) ||
+                                item.getDui().toLowerCase().contains(buscar) ||
+                                item.getEmail().toLowerCase().contains(buscar)){
+                            alChat.add(item);
+                        }
+                    }
+                    ltsChat.setAdapter(new AdaptadorChats(getApplicationContext(), alChat));
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+    private void eliminarChat(){
+        try{
+            String nombre = jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("nombre");
+            AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
+            confirmacion.setTitle("Esta seguro de eliminar a: ");
+            confirmacion.setMessage(nombre);
+            confirmacion.setPositiveButton("Si", (dialog, which) -> {
+                try {
+                    di = new detectarInternet(this);
+                    if(di.hayConexionInternet()){//online
+                        JSONObject datosChats = new JSONObject();
+                        String _id = jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("_id");
+                        String _rev = jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("_rev");
+                        String url = utilidades.url_mto + "/" + _id + "?rev=" + _rev;
+                        enviarDatosServidor objEnviarDatosServidor = new enviarDatosServidor(this);
+                        String respuesta = objEnviarDatosServidor.execute(datosChats.toString(), "DELETE", url).get();
+                        JSONObject respuestaJSON = new JSONObject(respuesta);
+                        if(!respuestaJSON.getBoolean("ok")) {
+                            mostrarMsg("Error al intentar eliminar: " + respuesta);
+                        }
+                    }
+                    String respuesta = db.administrar_Chat("eliminar", new String[]{jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("idChat")});
+                    if(respuesta.equals("ok")) {
+                        listarDatos();//idAmigo
+                        mostrarMsg("Registro eliminado con exito");
+                    }else{
+                        mostrarMsg("Error al eliminar: " + respuesta);
+                    }
+                }catch (Exception e){
+                    mostrarMsg("Error en eliminar: " + e.getMessage());
+                }
+            });
+            confirmacion.setNegativeButton("No", (dialog, which) -> {
+                dialog.dismiss();
+            });
+            confirmacion.create().show();
+        }catch (Exception e){
+            mostrarMsg("Error eliminar: " + e.getMessage());
+        }
+    }
+
     //Para obtener ubicación
+
     void obtenerPosicion(){
         try{
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -586,14 +814,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 @Override
                 public void onProviderDisabled(String provider) {
-                    //Tengo que ver como pedir que se habilite la ubicación
-                    try{
                     tempVal.setText("Proveedor deshabilitado: "+ provider);
-                    }
-                    catch (Exception e){
-                        //mostrarMsg("Proveedor deshabilitado: "+ e.getMessage());
-                        mostrarMsg("Ubicación deshabilitada");
-                    }
                 }
             };
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
@@ -602,17 +823,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     void mostrarUbicacion(Location location){
-
+        try{
         lblUbicacion.setText("Mi ubicación: "+"\nLatitud: "+ location.getLatitude() + "\nLongitud: "+ location.getLongitude() + "\nAltitud: "+ location.getAltitude());
 /*        lblUbicacion.setText("Mi ubicación: "+"\nLatitud: "+ latitud + "\nLongitud: "+ longitud);*/
         latitud = location.getLatitude();
         longitud = location.getLongitude();
-
+        }
+        catch (Exception e){
+            lblUbicacion.setText("Error al obtener la ubicación: "+ e.getMessage());
+        }
     }
 
     //Parte del mapa
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        try {
             mMap = googleMap;
             this.mMap.setOnMapClickListener(this);
             this.mMap.setOnMapLongClickListener(this);
@@ -624,31 +849,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //mMap.addMarker(new MarkerOptions().position(ElSalvador).title("Ubicación de El Salvador"));
             //mMap.moveCamera(CameraUpdateFactory.newLatLng(ElSalvador));//actualiza el mapa a ubicación indicada
         }
+        catch (Exception e){
+            mostrarMsg("Error al obtener la ubicación: "+ e.getMessage());
+        }
+        }
     //Por si solo hay un click corto
 
     @Override
     public void onMapClick(@NonNull LatLng latLng) {
+        try{
 /*        lblLatitud.setText("Latitud: " +""+ latLng.latitude);
         lblLongitud.setText("Longitud: "+""+ latLng.longitude);*/
 
         mMap.clear();
         mMap.addMarker(new MarkerOptions().position(latLng).title("Ubicación seleccionada").snippet("Latitud: " + latLng.latitude + " Longitud: " + latLng.longitude));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
+        }
+        catch (Exception e){
+            mostrarMsg("Error al obtener la ubicación: "+ e.getMessage());
+        }
     }
     //Por si hay un click largo
     @Override
     public void onMapLongClick(@NonNull LatLng latLng) {
 /*        lblLatitud.setText(""+ latLng.latitude);
         lblLongitud.setText(""+ latLng.longitude);*/
-            mMap.addMarker(new MarkerOptions().position(latLng).title("Ubicación seleccionada").snippet("Latitud: " + latLng.latitude + " Longitud: " + latLng.longitude));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.addMarker(new MarkerOptions().position(latLng).title("Ubicación seleccionada").snippet("Latitud: " + latLng.latitude + " Longitud: " + latLng.longitude));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
 
     }
 
     //Para lugares cercanos
-
-
-
 }
 
