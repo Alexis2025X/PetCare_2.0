@@ -9,7 +9,7 @@ public class DB extends SQLiteOpenHelper {
     //Nombre de la base de datos y version
 
     private static final String DATABASE_NAME = "petCare";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     //Cración de la base de datos
     //tabla cuentas
     private static final String SQLdbCuentas = "CREATE TABLE Cuentas (idCuenta INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, usuario TEXT, contraseña TEXT, email TEXT)";
@@ -17,6 +17,8 @@ public class DB extends SQLiteOpenHelper {
     private static final String SQLdbMascotas = "CREATE TABLE Mascota (idMascota INTEGER PRIMARY KEY AUTOINCREMENT, dueño Text, nombre TEXT, edad TEXT,raza TEXT,problemas_medicos TEXT,foto TEXT)";
     //tabla de Citas
     private static final String SQLdbCitas = "CREATE TABLE Citas (idCitas INTEGER PRIMARY KEY AUTOINCREMENT, nombreMascota  Text, fecha DATETIME, clinica TEXT, nota TEXT)";
+    //tabla de Chats esta ira a Firebase
+    private static final String SQLdbChats = "CREATE TABLE Chat (idChat TEXT, nombre TEXT, direccion TEXT, telefono TEXT, email TEXT, dui TEXT, urlFoto TEXT, miToken TEXT)";
 
     //Contexto de la base de datos
     public DB(Context context) {
@@ -30,6 +32,7 @@ public class DB extends SQLiteOpenHelper {
         db.execSQL(SQLdbCuentas);
         db.execSQL(SQLdbMascotas);
         db.execSQL(SQLdbCitas);
+        db.execSQL(SQLdbChats);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -119,6 +122,33 @@ public class DB extends SQLiteOpenHelper {
         }
 
     }
+    public String administrar_Chat(String accion, String[] datos) {
+        try{
+            //Escritura en la base de datos
+            SQLiteDatabase db = getWritableDatabase();
+            //Mensaje y consultas
+            String mensaje = "ok", sql = "";
+            switch (accion) {
+                case "nuevo":
+                    sql = "INSERT INTO Chat (nombre, direccion, telefono, email, dui, urlFoto, miToken) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4] + "', '" + datos[5] + "', '" + datos[6] + "', '" + datos[7] + "')";
+                    break;
+                case "modificar":
+                    sql = "UPDATE Chat SET nombre = '" + datos[1] + "', direccion = '" + datos[2] + "', telefono = '" + datos[3] + "', email = '" + datos[4] + "', dui = '" + datos[5] + "', urlFoto = '" + datos[6] + "' WHERE idChat = '" + datos[0] + "'";
+                    break;
+                case "eliminar":
+                    sql = "DELETE FROM Chat WHERE idChat = '" + datos[0] + "'";
+                    break;
+            }
+            db.execSQL(sql);
+            db.close();
+            return mensaje;
+            //Excepción
+        } catch (Exception e) {
+
+            return e.getMessage();
+        }
+
+    }
     public Cursor lista_Citas(){
         //bd es el ejecutador de consultas
         SQLiteDatabase db = getReadableDatabase();
@@ -133,6 +163,11 @@ public class DB extends SQLiteOpenHelper {
         //bd es el ejecutador de consultas
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT * FROM Mascota", null);
+    }
+    public Cursor lista_chat(){
+        //bd es el ejecutador de consultas
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery("SELECT * FROM Chat", null);
     }
 
 }

@@ -8,6 +8,12 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.LOCATION_PERMISSION_REQUEST_CODE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -18,12 +24,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetCare20"
         tools:targetApi="31">
+
+<!--Llave el API_KEY en el manifest para que no se vea en el repositorio-->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA9lUx1GnfMshtYnuFw2V2xMgNFgRJgrgs" />
+
+<!--        <activity
+            android:name=".MapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps" />-->
         <activity
             android:name=".agregar_chat"
             android:exported="false" />
-        <activity
+<!--        <activity
             android:name=".mi_cuenta"
-            android:exported="false" />
+            android:exported="false" />-->
         <activity
             android:name=".agregar_mascotas"
             android:exported="false" />
@@ -45,6 +61,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.alexis.petcare20.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

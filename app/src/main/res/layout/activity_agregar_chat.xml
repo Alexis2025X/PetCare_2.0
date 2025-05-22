@@ -76,7 +76,7 @@
             android:textSize="21sp" />
 
         <EditText
-            android:id="@+id/txtDirecion"
+            android:id="@+id/txtDireccion"
             android:layout_width="254dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
