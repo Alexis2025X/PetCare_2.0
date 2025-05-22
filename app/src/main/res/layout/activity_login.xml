@@ -85,7 +85,8 @@
         android:backgroundTint="@color/color_btn"
         android:textColor="@color/black"
         android:text="Iniciar Sesión"
-        android:layout_marginTop="460dp"/>
+        android:layout_marginTop="460dp"
+        android:textSize="18sp"/>
 
     <!-- Botón para crear usuario -->
 
@@ -97,7 +98,8 @@
         android:textColor="@color/black"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="523dp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textSize="18sp"/>
 
     <Button
         android:id="@+id/btnCrearCuenta"
@@ -107,7 +109,8 @@
         android:backgroundTint="@color/color_btn"
         android:text="Crear cuenta"
         android:textColor="@color/black"
-        android:layout_marginTop="560dp"/>
+        android:layout_marginTop="560dp"
+        android:textSize="18sp"/>
 
     <ImageButton
         android:id="@+id/btnOcultar"

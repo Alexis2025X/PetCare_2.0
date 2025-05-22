@@ -11,7 +11,7 @@
 
 
 
-       <LinearLayout
+       <RelativeLayout
         android:id="@+id/layout_mascotas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,16 +26,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <ListView
-            android:id="@+id/ltsMascotas"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="-1dp" />
+           <ListView
+               android:id="@+id/ltsMascotas"
+               android:layout_below="@+id/txtBuscarMascotas"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"/>
 
 
-
-
-    </LinearLayout>
+       </RelativeLayout>
 <!--   android:layout_marginTop="-100dp"-->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAgregarMascotas"
@@ -50,7 +48,7 @@
         android:src="@android:drawable/ic_input_add"
         android:visibility="visible"/>-->
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layout_chat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -66,10 +64,10 @@
             android:layout_height="wrap_content"/>
         <ListView
             android:id="@+id/ltsChat"
+            android:layout_below="@+id/txtBuscarChats"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="-1dp" />
-    </LinearLayout>
+            android:layout_height="match_parent" />
+    </RelativeLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAgregarChat"
@@ -84,7 +82,7 @@
         android:src="@android:drawable/ic_input_add"
         android:visibility="gone"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layout_citas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -100,11 +98,11 @@
             android:layout_height="wrap_content"/>
         <ListView
             android:id="@+id/ltsCitas"
+            android:layout_below="@+id/txtBuscarCitas"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="-1dp" />
+            android:layout_height="match_parent" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAgregarCitasMascotas"
@@ -120,7 +118,7 @@
         android:src="@android:drawable/ic_input_add"
         android:visibility="gone"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layout_veterinarios"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -128,26 +126,6 @@
         android:orientation="vertical"
         android:visibility="gone">  <!-- Vista inicial visible -->
 
-<!--        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:map="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".MapsActivity" />-->
-
-<!--        <TextView
-            android:id="@+id/lblLatitud"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Latitud: " />
-        <TextView
-            android:id="@+id/lblLongitud"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Longitud: " />-->
         <TextView
             android:id="@+id/lblUbicacion"
             android:layout_width="wrap_content"
@@ -155,20 +133,19 @@
             android:text="Mi ubicación: Obteniendo ubicación... " />
         <fragment
             android:id="@+id/mapa"
+            android:layout_below="@+id/lblUbicacion"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="650dp"
-            android:layout_alignBottom="@+id/layout_veterinarios"
-            android:layout_marginTop="0dp"
+            android:layout_height="match_parent"
             map:cameraZoom="10"
             map:uiRotateGestures="true"
             map:uiZoomGestures="true"
             tools:context=".MainActivity"/>
         <!--        map:uiScrollGestures="true"-->
-    </LinearLayout>
+    </RelativeLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layout_cuenta"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -177,7 +154,7 @@
         android:visibility="gone">  <!-- Vista inicial visible -->
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/CvCitas"
+            android:id="@+id/CvCuenta"
             android:layout_width="400dp"
             android:layout_height="420dp"
             android:layout_centerHorizontal="true"
@@ -294,37 +271,46 @@
             android:ellipsize="end"-->
 
         </androidx.cardview.widget.CardView>
+
         <Button
             android:id="@+id/btnEditarCuenta"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="30dp"
-            android:text="Editar cuenta"
-            android:backgroundTint="@color/color_menu"
-            android:textColor="@color/color_letras" />
-        <Button
-            android:id="@+id/btnEliminarCuenta"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-49dp"
-            android:layout_marginStart="225dp"
-            android:text="Eliminar cuenta"
+            android:layout_below="@+id/CvCuenta"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
             android:backgroundTint="@color/color_menu"
-            android:textColor="@color/color_letras" />
+            android:text="Editar cuenta"
+            android:textColor="@color/color_letras"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnEliminarCuenta"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/CvCuenta"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:backgroundTint="@color/color_menu"
+            android:text="Eliminar cuenta"
+            android:textColor="@color/color_letras"
+            android:textSize="18sp" />
         <Button
             android:id="@+id/btnCerrarSesion"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/btnEliminarCuenta"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="80dp"
             android:layout_marginStart="50dp"
             android:text="Cerrar sesión"
             android:backgroundTint="@color/color_menu"
-            android:textColor="@color/color_letras" />
+            android:textColor="@color/color_letras"
+            android:textSize="18sp"/>
 
-
-
-    </LinearLayout>
+    </RelativeLayout>
 
 <!--    <FrameLayout
         android:id="@+id/fragment_container"

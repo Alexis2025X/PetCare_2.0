@@ -41,6 +41,7 @@
         android:layout_width="362dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtTextoCrearCuenta"
+        android:drawableStart="@drawable/user"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
@@ -56,6 +57,7 @@
         android:id="@+id/txtPassword"
         android:layout_width="362dp"
         android:layout_height="wrap_content"
+        android:drawableStart="@drawable/candado"
         android:layout_below="@+id/txtUsuario"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
@@ -71,6 +73,7 @@
     <EditText
         android:id="@+id/txtCorreo"
         android:layout_width="362dp"
+        android:drawableStart="@drawable/correo"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtPassword"
         android:layout_centerHorizontal="true"

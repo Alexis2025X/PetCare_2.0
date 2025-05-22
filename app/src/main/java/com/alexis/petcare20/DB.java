@@ -9,7 +9,7 @@ public class DB extends SQLiteOpenHelper {
     //Nombre de la base de datos y version
 
     private static final String DATABASE_NAME = "petCare";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     //Cración de la base de datos
     //tabla cuentas
     private static final String SQLdbCuentas = "CREATE TABLE Cuentas (idCuenta INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, usuario TEXT, contraseña TEXT, email TEXT)";

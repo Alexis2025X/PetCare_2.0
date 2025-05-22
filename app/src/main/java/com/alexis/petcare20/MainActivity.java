@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +54,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
    // private LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
-    LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
+    //LinearLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
+    RelativeLayout layout_mascotas, layout_chat, layout_citas, layout_veterinarios, layout_cuenta;
     BottomNavigationView bottomNav;
     Button btn;
     Bundle parametros = new Bundle();
@@ -563,7 +565,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private  void eliminarMascota(){
         try {
             db = new DB(this);
-            String idMascota = jsonArray.getJSONObject(posicion).getString("idMascota");
+            String idMascota = jsonArrayMascotas.getJSONObject(posicion).getString("idMascota");
             String respuesta = db.administrar_Mascota("eliminar", new String[]{idMascota});
             if (respuesta.equals("ok")) {
                 obtenerDatosMascotas();
