@@ -15,7 +15,7 @@
         android:layout_centerHorizontal="true"
         android:src="@drawable/logo_png"
         tools:srcCompat="@drawable/logo_png"
-        android:layout_marginTop="60dp"/>
+        android:layout_marginTop="20dp"/>
 
     <TextView
         android:id="@+id/txtTextoCrearCuenta"
@@ -33,15 +33,26 @@
         android:layout_marginTop="10dp"/>
 
 
-
+    <EditText
+        android:id="@+id/txtNombreUser"
+        android:layout_width="362dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtTextoCrearCuenta"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:hint="Nombre"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:singleLine="true"/>
 
 
     <EditText
         android:id="@+id/txtUsuario"
         android:layout_width="362dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txtTextoCrearCuenta"
         android:drawableStart="@drawable/user"
+        android:layout_below="@+id/txtNombreUser"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
