@@ -85,8 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     chats misChat;
     DatabaseReference databaseReference;
 //Para el mapa
-    TextView tempVal;
-    TextView lblUbicacion, lblLatitud, lblLongitud;
+    TextView tempVal, lblUbicacion, lblLatitud, lblLongitud;
     GoogleMap mMap;
     LocationManager locationManager;
     LocationListener locationListener;
@@ -99,15 +98,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //Para Menu
+        bottomNav = findViewById(R.id.bottom_nav);
         //Para las vistas
         layout_mascotas = findViewById(R.id.layout_mascotas);
         layout_chat = findViewById(R.id.layout_chat);
         layout_citas = findViewById(R.id.layout_citas);
         layout_veterinarios = findViewById(R.id.layout_veterinarios);
         layout_cuenta = findViewById(R.id.layout_cuenta);
-
-        bottomNav = findViewById(R.id.bottom_nav);
 
         fabAgregarCitas = findViewById(R.id.fabAgregarCitasMascotas);
         fabAgregarChat = findViewById(R.id.fabAgregarChat);
@@ -116,110 +114,138 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         fabAgregarMascotas = findViewById(R.id.fabAgregarMascotas);
         fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
 
-        parametros.putString("accion", "nuevo");
+        String CargarLayout = getIntent().getStringExtra("cargar_layout");
+        if("mascotas".equals(CargarLayout)){
+            ventanaMascota();
+            bottomNav.setSelectedItemId(R.id.mascotasMenu);
+        }else if("citas".equals(CargarLayout)){
+            ventanaCita();
+            bottomNav.setSelectedItemId(R.id.citasMenu);
+        }else if("chat".equals(CargarLayout)){
+            ventanaChat();
+            bottomNav.setSelectedItemId(R.id.chatMenu);
+        } else if ("veterinarios".equals(CargarLayout)) {
+            ventanaVeterinario();
+            bottomNav.setSelectedItemId(R.id.veterinariosMenu);
+        }/*else if ("cuenta".equals(CargarLayout)) {
+            ventanaCuenta();
+            bottomNav.setSelectedItemId(R.id.cuentaMenu);
+        }*/
 
+
+
+        parametros.putString("accion", "nuevo");
         db = new DB(this);
+
         bottomNav.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.mascotasMenu) {
-                layout_mascotas.setVisibility(View.VISIBLE);
-                layout_chat.setVisibility(View.GONE);
-                layout_citas.setVisibility(View.GONE);
-                layout_veterinarios.setVisibility(View.GONE);
-                layout_cuenta.setVisibility(View.GONE);
-
-/*                fab = findViewById(R.id.fabAgregarMascotas);
-                //fab.setVisibility(View.VISIBLE);
-                fab.setOnClickListener(view->abrirAgregarMascotas());*/
-                fabAgregarMascotas.setVisibility(View.VISIBLE);
-                fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
-                fabAgregarCitas.setVisibility(View.GONE);
-                fabAgregarChat.setVisibility(View.GONE);
-
+                ventanaMascota();
                 return true;
             }else if (item.getItemId() == R.id.chatMenu) {
-                layout_mascotas.setVisibility(View.GONE);
-                layout_chat.setVisibility(View.VISIBLE);
-                layout_citas.setVisibility(View.GONE);
-                layout_veterinarios.setVisibility(View.GONE);
-                layout_cuenta.setVisibility(View.GONE);
-
-                //Los fabs desaparecen
-                fabAgregarChat.setVisibility(View.VISIBLE);
-                fabAgregarChat.setOnClickListener(view->abrirAgregarChat());
-                fabAgregarMascotas.setVisibility(View.GONE);
-                fabAgregarCitas.setVisibility(View.GONE);
-
+                ventanaChat();
                 return true;
             }else if (item.getItemId() == R.id.citasMenu) {
-                layout_mascotas.setVisibility(View.GONE);
-                layout_chat.setVisibility(View.GONE);
-                layout_citas.setVisibility(View.VISIBLE);
-                layout_veterinarios.setVisibility(View.GONE);
-                layout_cuenta.setVisibility(View.GONE);
-
-/*                fab = findViewById(R.id.fabAgregarCitasMascotas);
-                fab.setOnClickListener(view->abrirAgregarCitas());*/
-                fabAgregarChat.setVisibility(View.GONE);
-                fabAgregarCitas.setVisibility(View.VISIBLE);
-                fabAgregarCitas.setOnClickListener(view->abrirAgregarCitas());
-                fabAgregarMascotas.setVisibility(View.GONE);
-
+                ventanaCita();
                 return true;
             } else if (item.getItemId() == R.id.veterinariosMenu) {
-                layout_mascotas.setVisibility(View.GONE);
-                layout_chat.setVisibility(View.GONE);
-                layout_citas.setVisibility(View.GONE);
-                layout_veterinarios.setVisibility(View.VISIBLE);
-                layout_cuenta.setVisibility(View.GONE);
-                //Los fabs desaparecen
-                fabAgregarChat.setVisibility(View.GONE);
-                fabAgregarMascotas.setVisibility(View.GONE);
-                fabAgregarCitas.setVisibility(View.GONE);
-                //Se muestra el mapa;
-                mostrarMsg("Obteniendo ubicación...");
+                ventanaVeterinario();
                 return true;
             } else if (item.getItemId() == R.id.cuentaMenu){
-                    layout_mascotas.setVisibility(View.GONE);
-                    layout_chat.setVisibility(View.GONE);
-                    layout_citas.setVisibility(View.GONE);
-                    layout_veterinarios.setVisibility(View.GONE);
-                    layout_cuenta.setVisibility(View.VISIBLE);
-
-                    btn = findViewById(R.id.btnCerrarSesion);
-                    btn.setOnClickListener(view -> {
-                        Intent intent = new Intent(this, Login.class);
-                        startActivity(intent);
-                    });
-                //Los fabs desaparecen
-                fabAgregarChat.setVisibility(View.GONE);
-                fabAgregarMascotas.setVisibility(View.GONE);
-                fabAgregarCitas.setVisibility(View.GONE);
+                ventanaCuenta();
                 return true;
             }
             return false;
         });
-
-
-        //para mascotas
-        obtenerDatosMascotas();
-        buscarMascotas();
-        //Para citas
-        obtenerDatosCitas();
-        buscarCitas();
-        //Para chats
-        listarDatos();
-        buscarChats();
-        //Para el mapa FIREBASE
-
+        //Para ubicación
         lblUbicacion = findViewById(R.id.lblUbicacion);
-/*        lblLatitud = findViewById(R.id.lblLatitud);
-        lblLongitud = findViewById(R.id.lblLongitud);*/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa);
         mapFragment.getMapAsync(this);
-        obtenerPosicion();
+        if(layout_mascotas.getVisibility() == View.VISIBLE) {
+            //para mascotas
+            obtenerDatosMascotas();
+            buscarMascotas();
+        }else if(layout_citas.getVisibility() == View.VISIBLE){
+            //Para citas
+            obtenerDatosCitas();
+            buscarCitas();
+        }else if(layout_chat.getVisibility() == View.VISIBLE){
+            //Para chats
+            listarDatos();
+            buscarChats();
+        } else if (layout_veterinarios.getVisibility() == View.VISIBLE) {
+            obtenerPosicion();
+        }
 
     }
+    private void ventanaMascota(){
+        layout_mascotas.setVisibility(View.VISIBLE);
+        layout_chat.setVisibility(View.GONE);
+        layout_citas.setVisibility(View.GONE);
+        layout_veterinarios.setVisibility(View.GONE);
+        layout_cuenta.setVisibility(View.GONE);
+        //Los fabs desaparecen
+        fabAgregarMascotas.setVisibility(View.VISIBLE);
+        fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
+        fabAgregarCitas.setVisibility(View.GONE);
+        fabAgregarChat.setVisibility(View.GONE);
+    }
+    private void ventanaChat(){
+        layout_mascotas.setVisibility(View.GONE);
+        layout_chat.setVisibility(View.VISIBLE);
+        layout_citas.setVisibility(View.GONE);
+        layout_veterinarios.setVisibility(View.GONE);
+        layout_cuenta.setVisibility(View.GONE);
 
+        //Los fabs desaparecen
+        fabAgregarChat.setVisibility(View.VISIBLE);
+        fabAgregarChat.setOnClickListener(view->abrirAgregarChat());
+        fabAgregarMascotas.setVisibility(View.GONE);
+        fabAgregarCitas.setVisibility(View.GONE);
+
+    }
+    private void ventanaCita(){
+        layout_mascotas.setVisibility(View.GONE);
+        layout_chat.setVisibility(View.GONE);
+        layout_citas.setVisibility(View.VISIBLE);
+        layout_veterinarios.setVisibility(View.GONE);
+        layout_cuenta.setVisibility(View.GONE);
+
+        fabAgregarChat.setVisibility(View.GONE);
+        fabAgregarCitas.setVisibility(View.VISIBLE);
+        fabAgregarCitas.setOnClickListener(view->abrirAgregarCitas());
+        fabAgregarMascotas.setVisibility(View.GONE);
+
+    }
+    private void ventanaVeterinario(){
+        layout_mascotas.setVisibility(View.GONE);
+        layout_chat.setVisibility(View.GONE);
+        layout_citas.setVisibility(View.GONE);
+        layout_veterinarios.setVisibility(View.VISIBLE);
+        layout_cuenta.setVisibility(View.GONE);
+        //Los fabs desaparecen
+        fabAgregarChat.setVisibility(View.GONE);
+        fabAgregarMascotas.setVisibility(View.GONE);
+        fabAgregarCitas.setVisibility(View.GONE);
+        //Se muestra el mapa;
+        mostrarMsg("Obteniendo ubicación...");
+    }
+    private void ventanaCuenta(){
+        layout_mascotas.setVisibility(View.GONE);
+        layout_chat.setVisibility(View.GONE);
+        layout_citas.setVisibility(View.GONE);
+        layout_veterinarios.setVisibility(View.GONE);
+        layout_cuenta.setVisibility(View.VISIBLE);
+
+        btn = findViewById(R.id.btnCerrarSesion);
+        btn.setOnClickListener(view -> {
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+        });
+        //Los fabs desaparecen
+        fabAgregarChat.setVisibility(View.GONE);
+        fabAgregarMascotas.setVisibility(View.GONE);
+        fabAgregarCitas.setVisibility(View.GONE);
+    }
     private void abrirAgregarCitas(){
         Intent intent = new Intent(this, agregar_citas.class);
         intent.putExtras(parametros);
@@ -488,7 +514,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mostrarMsg("Error: " + e.getMessage());
         }
     }
-
     private void mostrarMascotas() {
 
         try{
@@ -528,7 +553,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
     }
-
     private void buscarMascotas(){
         TextView tempVal = findViewById(R.id.txtBuscarMascotas);
 
@@ -561,7 +585,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-
     private  void eliminarMascota(){
         try {
             db = new DB(this);
@@ -596,7 +619,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     if( snapshot.getChildrenCount()<=0 ){
                                         parametros.putString("accion", "nuevo");
                                         if(layout_chat.getVisibility() == View.VISIBLE){
-                                            mostrarMsg("1 No hay chats registrados.");
+                                            mostrarMsg("No hay chats registrados.");
                                             abrirAgregarChat();
                                         }
                                         //abrirAgregarChat();
