@@ -696,6 +696,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             jsonObject.getString("urlFoto"),
                             jsonObject.getString("urlCompletaFotoFirestore"),
                             jsonObject.getString("miToken")
+
                     );
                     alChat.add(misChat);
                 }
