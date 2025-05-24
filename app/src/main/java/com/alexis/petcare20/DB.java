@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DB extends SQLiteOpenHelper {
-    //Nombre de la base de datos y version
+    //Nombre de la base de datos y version agp
 
     private static final String DATABASE_NAME = "petCare";
     private static final int DATABASE_VERSION = 2;

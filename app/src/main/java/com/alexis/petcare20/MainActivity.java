@@ -160,19 +160,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         lblUbicacion = findViewById(R.id.lblUbicacion);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa);
         mapFragment.getMapAsync(this);
-        if(layout_mascotas.getVisibility() == View.VISIBLE) {
+
+
             //para mascotas
             obtenerDatosMascotas();
             buscarMascotas();
-        }else if(layout_citas.getVisibility() == View.VISIBLE){
             //Para citas
             obtenerDatosCitas();
             buscarCitas();
-        }else if(layout_chat.getVisibility() == View.VISIBLE){
             //Para chats
             listarDatos();
             buscarChats();
-        } else if (layout_veterinarios.getVisibility() == View.VISIBLE) {
+
+
+        if (layout_veterinarios.getVisibility() == View.VISIBLE) {
             obtenerPosicion();
         }
 
