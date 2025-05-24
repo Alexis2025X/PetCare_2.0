@@ -173,7 +173,7 @@
                 android:textColor="@color/color_letras"
                 android:textSize="50sp" />
             <TextView
-                android:id="@+id/lblUsuario"
+                android:id="@+id/lblUsuarioCuenta"
                 android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -182,7 +182,7 @@
                 android:textSize="21sp" />
 
             <EditText
-                android:id="@+id/txtUsuario"
+                android:id="@+id/txtUsuarioCuenta"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -190,6 +190,7 @@
                 android:layout_marginStart="140dp"
                 android:hint="my_user"
                 android:maxLines="1"
+                android:enabled="false"
                 android:ellipsize="end"
                 android:singleLine="true"/>
             <!--android:scrollHorizontally="true"
@@ -197,7 +198,7 @@
             android:ellipsize="end"-->
 
             <TextView
-                android:id="@+id/lblNombreUsuario"
+                android:id="@+id/lblNombreCuenta"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -206,13 +207,15 @@
                 android:textSize="21sp" />
 
             <EditText
-                android:id="@+id/txtNombreUsuario"
+                android:id="@+id/txtNombreCuenta"
                 android:layout_width="230dp"
+
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="200dp"
                 android:layout_marginStart="140dp"
                 android:hint="Mario"
+                android:enabled="false"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:singleLine="true"/>
@@ -222,7 +225,7 @@
 
 
             <TextView
-                android:id="@+id/lblClinica"
+                android:id="@+id/lblContraseñaCuenta"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -231,13 +234,14 @@
                 android:textSize="21sp" />
 
             <EditText
-                android:id="@+id/txtNombreClinica"
+                android:id="@+id/txtContraseñaCuenta"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="140dp"
                 android:layout_marginTop="250dp"
                 android:hint="********"
+                android:enabled="false"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:singleLine="true"/>
@@ -246,7 +250,7 @@
             android:ellipsize="end"-->
 
             <TextView
-                android:id="@+id/lblEmail"
+                android:id="@+id/lblEmailCuenta"
                 android:layout_width="95dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -255,7 +259,7 @@
                 android:textSize="21sp" />
 
             <EditText
-                android:id="@+id/txtEmail"
+                android:id="@+id/txtEmailCuenta"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -264,6 +268,7 @@
                 android:layout_marginBottom="30dp"
                 android:hint="mar@gmail.com"
                 android:maxLines="1"
+                android:enabled="false"
                 android:ellipsize="end"
                 android:singleLine="true"/>
             <!--android:scrollHorizontally="true"

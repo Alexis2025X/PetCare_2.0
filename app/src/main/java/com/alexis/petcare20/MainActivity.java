@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     JSONObject jsonObject;
     int posicion = 0;
     DB db;
+    String idCuentaActual = "";
     String miToken = "";
     detectarInternet di;
     FloatingActionButton fabAgregarCitas, fabAgregarMascotas, fabAgregarChat;
@@ -184,12 +185,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     layout_citas.setVisibility(View.GONE);
                     layout_veterinarios.setVisibility(View.GONE);
                     layout_cuenta.setVisibility(View.VISIBLE);
-
+                mostrarDatosCuenta();
                     btn = findViewById(R.id.btnCerrarSesion);
                     btn.setOnClickListener(view -> {
                         Intent intent = new Intent(this, Login.class);
                         startActivity(intent);
                     });
+
+                btn = findViewById(R.id.btnEditarCuenta);
+                btn.setOnClickListener(view -> {
+                   editarCuenta();
+                });
+
+                btn = findViewById(R.id.btnEliminarCuenta);
+                btn.setOnClickListener(view -> {
+                    eliminarCuenta();
+                });
                 //Los fabs desaparecen
                 fabAgregarChat.setVisibility(View.GONE);
                 fabAgregarMascotas.setVisibility(View.GONE);
@@ -210,6 +221,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         listarDatos();
         buscarChats();
         //Para el mapa FIREBASE
+
+        //para mostrar datos de cuentas
+
 
         lblUbicacion = findViewById(R.id.lblUbicacion);
 /*        lblLatitud = findViewById(R.id.lblLatitud);
@@ -883,5 +897,147 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //Para lugares cercanos
+
+
+    //comienzo el CRUB de cuentas
+
+//    Todos btn
+//    btnEditarCuenta
+//            btnEliminarCuenta
+//        btnCerrarSesion
+
+    public void mostrarDatosCuenta(){
+        try {
+
+            Bundle parameters = getIntent().getExtras();
+                TextView txtUsuario = findViewById(R.id.txtUsuarioCuenta);
+                TextView txtNombre = findViewById(R.id.txtNombreCuenta);
+                TextView txtContraseña = findViewById(R.id.txtContraseñaCuenta);
+                TextView txtEmail = findViewById(R.id.txtEmailCuenta);
+
+                idCuentaActual = parameters.getString("idCuenta");
+                txtUsuario.setText( parameters.getString("usuarioCuenta"));
+                txtNombre.setText( parameters.getString("nombreCuenta"));
+                txtContraseña.setText(parameters.getString("contrasenaCuenta"));
+                txtEmail.setText(parameters.getString("correoCuenta"));
+        } catch (Exception e) {
+            mostrarMsg("Error al obtener datos de la cuenta: " + e.getMessage());
+        }
+    }
+
+
+
+    public void editarCuenta(){
+        try {
+
+
+            Button btnEliminar = findViewById(R.id.btnEliminarCuenta);
+
+            Button btnEditar = findViewById(R.id.btnEditarCuenta);
+//            txtUsuarioCuenta
+//            txtNombreCuenta
+//            txtContraseñaCuenta
+//             txtEmailCuenta
+
+            if ( btnEditar.getText().toString() == "Actualizar") {
+            TextView txtNombre = findViewById(R.id.txtNombreCuenta);
+            TextView txtUsuario = findViewById(R.id.txtUsuarioCuenta);
+            TextView txtContraseña = findViewById(R.id.txtContraseñaCuenta);
+            TextView txtEmail = findViewById(R.id.txtEmailCuenta);
+                try {
+
+
+                    String nombre = txtNombre.getText().toString();
+                    String usuario = txtUsuario.getText().toString();
+                    String contraseña = txtContraseña.getText().toString();
+                    String email = txtEmail.getText().toString();
+
+                    if (nombre.isEmpty() || usuario.isEmpty() || contraseña.isEmpty() || email.isEmpty()) {
+                        mostrarMsg("Por favor, complete todos los campos.");
+                        return;
+                    }
+
+                    String[] datos = {idCuentaActual,nombre, usuario, contraseña, email};
+
+                    db = new DB(this);
+                    String respuesta = db.administrar_cuentas("modificar", datos);
+                    if (respuesta == "Ok"){
+                        mostrarMsg("Cuenta actualizada con éxito.");
+                        Intent intent = new Intent(this, Login.class);
+                        startActivity(intent);
+                    }else {
+                        mostrarMsg("Error al actualizar la cuenta: " + respuesta);
+                    }
+                } catch (Exception e) {
+                    mostrarMsg("Error al actualizar la cuenta: " + e.getMessage());
+                }
+
+        }else {
+                btnEliminar.setText("Cancelar");
+                btnEditar.setText("Actualizar");
+                enabledCuentas(true);
+            }
+
+        }catch (Exception e){
+            mostrarMsg("Error al editar cuenta: " + e.getMessage());
+        }
+    }
+
+    public void eliminarCuenta(){
+        try {
+            Button btnEliminar = findViewById(R.id.btnEliminarCuenta);
+            Button btnEditar = findViewById(R.id.btnEditarCuenta);
+
+            if(btnEliminar.getText().toString() == "Cancelar"){
+                btnEliminar.setText("Eliminar Cuenta");
+                btnEditar.setText("Editar Cuenta");
+                enabledCuentas(false);
+            }else {
+                try{
+                    AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
+                    confirmacion.setTitle("Esta seguro de eliminar su cuenta \n esta acción es irreversible: ");
+                    confirmacion.setMessage("Eliminar cuenta?");
+                    confirmacion.setPositiveButton("Si", (dialog, which) -> {
+                        try {
+                            di = new detectarInternet(this);
+
+                            String respuesta = db.administrar_cuentas("eliminar", new String[]{idCuentaActual});
+                            if(respuesta.equals("ok")) {
+                                Intent intent = new Intent(this, Login.class);
+                                startActivity(intent);
+                                mostrarMsg("Registro eliminado con exito");
+                            }else{
+                                mostrarMsg("Error al eliminar: " + respuesta);
+                            }
+                        }catch (Exception e){
+                            mostrarMsg("Error en eliminar: " + e.getMessage());
+                        }
+                    });
+                    confirmacion.setNegativeButton("No", (dialog, which) -> {
+                        dialog.dismiss();
+                    });
+                    confirmacion.create().show();
+                }catch (Exception e){
+                    mostrarMsg("Error eliminar: " + e.getMessage());
+                }
+            }
+
+
+        } catch (Exception e) {
+            mostrarMsg("Error al eliminar cuenta: " + e.getMessage());
+        }
+    }
+    public void enabledCuentas(boolean avilitado){
+        TextView temv = findViewById(R.id.txtNombreCuenta);
+        temv.setEnabled(avilitado);
+        temv = findViewById(R.id.txtUsuarioCuenta);
+        temv.setEnabled(avilitado);
+        temv = findViewById(R.id.txtContraseñaCuenta);
+        temv.setEnabled(avilitado);
+        temv = findViewById(R.id.txtEmailCuenta);
+        temv.setEnabled(avilitado);
+
+    }
+
 }
 
