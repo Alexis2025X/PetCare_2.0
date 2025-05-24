@@ -1,6 +1,7 @@
 package com.alexis.petcare20;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,11 +22,14 @@ public class crear_cuenta extends AppCompatActivity {
     FloatingActionButton fab;
     Button btn;
     DB db;
+    Cursor cComprovacionUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_crear_cuenta);
+
 
         fab = findViewById(R.id.fabLogin);
         fab.setOnClickListener(view -> {
@@ -41,9 +45,9 @@ public class crear_cuenta extends AppCompatActivity {
     private void crearCuenta() {
         TextView temval = findViewById(R.id.txtUsuario);
         String usuario = temval.getText().toString();
-         temval = findViewById(R.id.txtPassword);
+        temval = findViewById(R.id.txtPassword);
         String contraseña = temval.getText().toString();
-         temval = findViewById(R.id.txtCorreo);
+        temval = findViewById(R.id.txtCorreo);
         String correo = temval.getText().toString();
         temval = findViewById(R.id.txtNombreUser);
         String nombre = temval.getText().toString();
@@ -53,13 +57,32 @@ public class crear_cuenta extends AppCompatActivity {
             mostrarMsg("Por favor, completa todos los campos.");
             return;
         }
+        if (comprovacionUser(usuario)) {
+            return;
+        }
         db = new DB(this);
-        String[] datos = {"",nombre,usuario, contraseña, correo};
-      String respuesta =  db.administrar_cuentas("nuevo", datos);
-      mostrarMsg("Estado de la cuenta: "  + respuesta);
+        String[] datos = {"", nombre, usuario, contraseña, correo};
+        String respuesta = db.administrar_cuentas("nuevo", datos);
+        mostrarMsg("Estado de la cuenta: " + respuesta);
     }
 
+    private boolean comprovacionUser(String user) {
+        try {
+            db = new DB(this);
+            boolean result = false;
+            cComprovacionUser = db.comprobarUser(user);
 
+            if (cComprovacionUser.moveToFirst()) {
+                mostrarMsg("El usuario que intenta crear ya existe.");
+                result = true;
+            }
+
+            return result;
+        } catch (Exception e) {
+            mostrarMsg("Error: " + e.getMessage());
+            return false;
+        }
+    }
     private void abrirLogin() {
         // Aquí puedes abrir la ventana de agregar citas
         // Por ejemplo, puedes iniciar una nueva actividad

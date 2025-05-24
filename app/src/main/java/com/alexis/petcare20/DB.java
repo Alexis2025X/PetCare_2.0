@@ -149,6 +149,25 @@ public class DB extends SQLiteOpenHelper {
         }
 
     }
+
+
+    public Cursor iniciarSesion(String user, String pass){
+        //bd es el ejecutador de consultas
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT idCuenta,nombre,usuario,contraseña,email FROM Cuentas WHERE usuario   = '" + user + "' AND contraseña  = '" + pass + "'";
+
+        return db.rawQuery(sql, null);
+    }
+
+    public Cursor comprobarUser(String user){
+        //bd es el ejecutador de consultas
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT idCuenta,nombre,usuario,contraseña,email FROM Cuentas WHERE usuario   = '" + user + "'";
+
+        return db.rawQuery(sql, null);
+    }
+
+
     public Cursor lista_Citas(){
         //bd es el ejecutador de consultas
         SQLiteDatabase db = getReadableDatabase();
