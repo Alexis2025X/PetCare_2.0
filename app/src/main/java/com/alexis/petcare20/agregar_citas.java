@@ -70,8 +70,6 @@ public class agregar_citas extends AppCompatActivity {
             if (accion.equals("modificar")) {
                 JSONObject datos = new JSONObject(parametros.getString("citas"));
 
-
-
                 idCitas = datos.getString("idCitas");
                 TextView tempVal = findViewById(R.id.txtNombreCitaMascota);
                 mostrarMsg(datos.getString("nombre") + "sfsdf");
@@ -88,8 +86,6 @@ public class agregar_citas extends AppCompatActivity {
                 tempVal = findViewById(R.id.txtNota);
                 tempVal.setText(datos.getString("nota"));
 
-
-
             }
 
         }catch (Exception e){
@@ -104,6 +100,7 @@ public class agregar_citas extends AppCompatActivity {
     private void abrirVentana() {
 
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("cargar_layout","citas");
         intent.putExtras(parametros);
         startActivity(intent);
 /*        mainActivity.layout_mascotas.setVisibility(View.GONE);
