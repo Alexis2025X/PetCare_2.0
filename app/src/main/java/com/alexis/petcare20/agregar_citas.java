@@ -43,6 +43,7 @@ public class agregar_citas extends AppCompatActivity {
     Bundle parametros = new Bundle();
     String accion = "nuevo";
     String idCitas = "";
+    String cuentaID, user;
 
 
     @Override
@@ -51,13 +52,15 @@ public class agregar_citas extends AppCompatActivity {
         setContentView(R.layout.activity_agregar_citas);
 
         db = new DB(this);
+        //usuario = getIntent().getStringExtra("usuarioCuenta");
 
         btn = findViewById(R.id.btnGuardarCita);
         btn.setOnClickListener(view->guardarCita());
 
         fab = findViewById(R.id.fabListaCitasMascotas);
         fab.setOnClickListener(view->abrirVentana());
-
+        cuentaID = getIntent().getStringExtra("idCuenta");
+        mostrarMsg("Este es el usuario: " + cuentaID);
         mostrarDatos();
     }
 
@@ -85,7 +88,6 @@ public class agregar_citas extends AppCompatActivity {
 
                 tempVal = findViewById(R.id.txtNota);
                 tempVal.setText(datos.getString("nota"));
-
             }
 
         }catch (Exception e){
@@ -103,16 +105,11 @@ public class agregar_citas extends AppCompatActivity {
         intent.putExtra("cargar_layout","citas");
         intent.putExtras(parametros);
         startActivity(intent);
-/*        mainActivity.layout_mascotas.setVisibility(View.GONE);
-        mainActivity.layout_cuenta.setVisibility(View.GONE);
-        mainActivity.layout_chat.setVisibility(View.GONE);
-        mainActivity.layout_veterinarios.setVisibility(View.GONE);
-        mainActivity.layout_citas.setVisibility(View.VISIBLE);*/
 
     }
     private void guardarCita(){
 
-      TextView  tempVal = findViewById(R.id.txtNombreCitaMascota);
+        TextView  tempVal = findViewById(R.id.txtNombreCitaMascota);
         String nombreMascota = tempVal.getText().toString();
 
         tempVal = findViewById(R.id.txtFecha);
@@ -124,19 +121,39 @@ public class agregar_citas extends AppCompatActivity {
         tempVal = findViewById(R.id.txtNota);
         String nota = tempVal.getText().toString();
 
+        //String usuario = getIntent().getStringExtra("usuarioCuenta");
+
+
         if (nombreMascota.isEmpty() || fecha.isEmpty() || clinica.isEmpty() || nota.isEmpty()) {
             mostrarMsg("Error: Todos los campos son obligatorios.");
             return;
         }
-        String[] datos = {idCitas, nombreMascota, fecha, clinica, nota};
+        cuentaID = getIntent().getStringExtra("idCuenta");
+        if (cuentaID == null || cuentaID.isEmpty()) {
+            mostrarMsg("Error: Usuario no encontrado.");
+            return;
+        }
+        String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, cuentaID};
+        Toast.makeText(getApplicationContext(), "Datos: " + datos[5], Toast.LENGTH_LONG).show();
         String mensaje = db.administrar_Citas(accion, datos);
        // db.administrar_Citas(accion, datos);
 
-        Toast.makeText(getApplicationContext(), "Registro guardado con exito. "+  mensaje , Toast.LENGTH_LONG).show();
+        AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
+        confirmacion.setTitle("ERROR");
+        confirmacion.setMessage("Este es el error: "+ mensaje.toString());
+        confirmacion.create().show();
+
+        //Toast.makeText(getApplicationContext(), "Registro guardado con exito. "+  mensaje , Toast.LENGTH_LONG).show();
         abrirVentana();
 
     }
-
+    private void mostrarAlertDialog(String msg){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error");
+        builder.setMessage(msg);
+        builder.setPositiveButton("Aceptar", null);
+        builder.create().show();
+    }
     private void mostrarMsg(String msg){
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }

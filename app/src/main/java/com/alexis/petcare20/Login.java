@@ -125,7 +125,6 @@ public class Login extends AppCompatActivity {
                 abrirPantallaPrincipal();
             } else {
                 mostrarMsg("Usuario o contraseña incorrectos.");
-
             }
 
         } catch (Exception e) {

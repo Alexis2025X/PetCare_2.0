@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     BottomNavigationView bottomNav;
     Button btn;
     Bundle parametros = new Bundle();
+    String cuentaID;
     JSONArray jsonArray, jsonArrayMascotas;
     JSONArray jsonArrayChats = new JSONArray();
     JSONObject jsonObject;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     FloatingActionButton fabAgregarCitas, fabAgregarMascotas, fabAgregarChat;
     ListView ltsCitas, ltsMascotas, ltsChat;
     Cursor cCitas, cMascotas, cChat;
-
+    //String usuario;
     //Para Citas
     final ArrayList<citas> alCitas = new ArrayList<citas>();
     final ArrayList<citas> alCitasCopia = new ArrayList<citas>();
@@ -133,10 +134,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             bottomNav.setSelectedItemId(R.id.cuentaMenu);
         }*/
 
-
-
+        //usuario = getIntent().getStringExtra("usuarioCuenta");
         parametros.putString("accion", "nuevo");
         db = new DB(this);
+        //db.deleteOldDatabases(this);
 
         bottomNav.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.mascotasMenu) {
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 ventanaCita();
                 return true;
             } else if (item.getItemId() == R.id.veterinariosMenu) {
+                obtenerPosicion();
                 ventanaVeterinario();
                 return true;
             } else if (item.getItemId() == R.id.cuentaMenu){
@@ -161,22 +163,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         lblUbicacion = findViewById(R.id.lblUbicacion);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa);
         mapFragment.getMapAsync(this);
-
-
+        cuentaID = getIntent().getStringExtra("idCuenta");
+        mostrarMsg("Bienvenido: " + cuentaID);
             //para mascotas
-            obtenerDatosMascotas();
+            obtenerDatosMascotas(cuentaID);
             buscarMascotas();
             //Para citas
-            obtenerDatosCitas();
+            obtenerDatosCitas(cuentaID);
             buscarCitas();
             //Para chats
             listarDatos();
             buscarChats();
+            //Para cuentas
+            mostrarDatosCuenta();
 
+/*        if (layout_veterinarios.getVisibility() == View.VISIBLE) {*/
 
-        if (layout_veterinarios.getVisibility() == View.VISIBLE) {
-            obtenerPosicion();
-        }
+/*        }*/
 
     }
     private void ventanaMascota(){
@@ -232,17 +235,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mostrarMsg("Obteniendo ubicación...");
     }
     private void ventanaCuenta(){
-                    layout_mascotas.setVisibility(View.GONE);
-                    layout_chat.setVisibility(View.GONE);
-                    layout_citas.setVisibility(View.GONE);
-                    layout_veterinarios.setVisibility(View.GONE);
-                    layout_cuenta.setVisibility(View.VISIBLE);
-                mostrarDatosCuenta();
-                    btn = findViewById(R.id.btnCerrarSesion);
-                    btn.setOnClickListener(view -> {
-                        Intent intent = new Intent(this, Login.class);
-                        startActivity(intent);
-                    });
+        layout_mascotas.setVisibility(View.GONE);
+        layout_chat.setVisibility(View.GONE);
+        layout_citas.setVisibility(View.GONE);
+        layout_veterinarios.setVisibility(View.GONE);
+        layout_cuenta.setVisibility(View.VISIBLE);
+        mostrarDatosCuenta();
+        btn = findViewById(R.id.btnCerrarSesion);
+        btn.setOnClickListener(view -> {
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+        });
 
                 btn = findViewById(R.id.btnEditarCuenta);
                 btn.setOnClickListener(view -> {
@@ -260,11 +263,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     private void abrirAgregarCitas(){
         Intent intent = new Intent(this, agregar_citas.class);
+        intent.putExtra("idCuenta", cuentaID);
         intent.putExtras(parametros);
         startActivity(intent);
     }
     private void abrirAgregarMascotas(){
         Intent intent = new Intent(this, agregar_mascotas.class);
+        intent.putExtra("idCuenta", cuentaID);
         intent.putExtras(parametros);
         startActivity(intent);
     }
@@ -277,6 +282,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //LA FUNCIÓN MSJ SIRVE PARA AMBOS
     private void mostrarMsg(String msg){
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+    }
+    private void mostrarAlertDialog(String msg){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error");
+        builder.setMessage(msg);
+        builder.setPositiveButton("Aceptar", null);
+        builder.create().show();
     }
     //La función de menu sirve para mascotas y citas
     @Override
@@ -306,7 +318,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     //La función de menu sirve para mascotas y citas SI LO PUEDES REFACTORIZAR HAZLO
-
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         if(layout_mascotas.getVisibility() == View.VISIBLE) {
@@ -321,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 } else if (item.getItemId() == R.id.mnxEliminarMascota) {
                     eliminarMascota();
-                    obtenerDatosMascotas();
+                    obtenerDatosMascotas(cuentaID);
                     buscarMascotas();
                 }
                 return true;
@@ -340,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     abrirAgregarCitas();
                 } else if (item.getItemId() == R.id.mnxEliminarCita) {
                     eliminarCita();
-                    obtenerDatosCitas();
+                    obtenerDatosCitas(cuentaID);
                     buscarCitas();
                 }
                 return true;
@@ -371,8 +382,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return super.onContextItemSelected(item);
         }
     }
-
-        private void eliminarCita () {
+    private void eliminarCita () {
             try {
                 String nombre = jsonArray.getJSONObject(posicion).getString("nombre");
                 AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
@@ -382,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     try {
                         String respuesta = db.administrar_Citas("eliminar", new String[]{jsonArray.getJSONObject(posicion).getString("idCitas")});
                         if (respuesta.equals("ok")) {
-                            obtenerDatosCitas();
+                            obtenerDatosCitas(cuentaID);
                             buscarCitas();
                             mostrarMsg("Registro eliminado con exito");
                         } else {
@@ -400,9 +410,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mostrarMsg("Error: " + e.getMessage());
             }
         }
-        private void obtenerDatosCitas () {
+    private void obtenerDatosCitas (String idCuenta) {
             try {
-                cCitas = db.lista_Citas();
+                db = new DB(this);
+                cCitas = db.lista_Citas(idCuenta);
                 //mostrarMsg(cCitas.toString() + "buyftyf");
                 if (cCitas.moveToFirst()) {
                     jsonArray = new JSONArray();
@@ -413,6 +424,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         jsonObject.put("fecha", cCitas.getString(2));
                         jsonObject.put("clinica", cCitas.getString(3));
                         jsonObject.put("nota", cCitas.getString(4));
+                        jsonObject.put("cuentaID", cCitas.getString(5));
                         jsonArray.put(jsonObject);
 
                         //mostrarMsg(cCitas.getString(4) + "buyftyf");
@@ -430,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mostrarMsg("Error: " + e.getMessage());
             }
         }
-        private void mostrarDatosCitas () {
+    private void mostrarDatosCitas () {
             try {
                 if (jsonArray.length() > 0) {
                     ltsCitas = findViewById(R.id.ltsCitas);
@@ -444,7 +456,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 jsonObject.getString("nombre"),
                                 jsonObject.getString("fecha"),
                                 jsonObject.getString("clinica"),
-                                jsonObject.getString("nota")
+                                jsonObject.getString("nota"),
+                                jsonObject.getString("cuentaID")
                                 //jsonObject.getString("foto")
                         );
                         alCitas.add(misCitas);
@@ -457,10 +470,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     abrirAgregarCitas();
                 }
             } catch (Exception e) {
+
                 mostrarMsg("Error: " + e.getMessage());
             }
         }
-        private void buscarCitas () {
+    private void buscarCitas () {
+
             TextView tempVal = findViewById(R.id.txtBuscarCitas);
             tempVal.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -470,6 +485,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    try{
                     alCitas.clear();
                     String buscar = tempVal.getText().toString().trim().toLowerCase();
                     if (buscar.length() <= 0) {
@@ -484,6 +500,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         ltsCitas.setAdapter(new AdaptadorCitas(getApplicationContext(), alCitas));
                     }
+                    }catch (Exception e){
+                        mostrarMsg("No hay citas registrados.");
+                    }
                 }
 
                 @Override
@@ -494,11 +513,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
     //AQUI COMIENZA PARA MASCOTAS
-    private void obtenerDatosMascotas(){
+    private void obtenerDatosMascotas(String idCuenta){
         try{
             db = new DB(this);
 
-            cMascotas = db.lista_mascotas();
+            cMascotas = db.lista_mascotas(idCuenta);
             if(cMascotas.moveToFirst()){
                 jsonArrayMascotas = new JSONArray();
                 do{
@@ -510,6 +529,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     jsonObject.put("raza", cMascotas.getString(4));
                     jsonObject.put("problemas_medicos", cMascotas.getString(5));
                     jsonObject.put("foto", cMascotas.getString(6));
+                    jsonObject.put("cuentaID", cMascotas.getString(7));
                     jsonArrayMascotas.put(jsonObject);
                 }while(cMascotas.moveToNext());
 
@@ -546,7 +566,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             jsonObject.getString("edad"),
                             jsonObject.getString("raza"),
                             jsonObject.getString("problemas_medicos"),
-                            jsonObject.getString("foto")
+                            jsonObject.getString("foto"),
+                            jsonObject.getString("cuentaID")
                     );
 
 
@@ -566,6 +587,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
     private void buscarMascotas(){
+
         TextView tempVal = findViewById(R.id.txtBuscarMascotas);
 
         tempVal.addTextChangedListener(new TextWatcher() {
@@ -575,7 +597,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                alMascotas.clear();
+                try{alMascotas.clear();
                 String buscar = tempVal.getText().toString().trim().toLowerCase();
                 if( buscar.length()<=0){
                     alMascotas.addAll(alMascotasCopia);
@@ -590,6 +612,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                     ltsMascotas.setAdapter(new adaptadorMascotas(getApplicationContext(), alMascotas));
                 }
+                }catch (Exception e){
+                    mostrarMsg("No hay mascotas registrados.");
+                }
             }
             @Override
             public void afterTextChanged(Editable s) {
@@ -603,7 +628,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             String idMascota = jsonArrayMascotas.getJSONObject(posicion).getString("idMascota");
             String respuesta = db.administrar_Mascota("eliminar", new String[]{idMascota});
             if (respuesta.equals("ok")) {
-                obtenerDatosMascotas();
+                obtenerDatosMascotas(cuentaID);
                 mostrarMsg("Registro eliminada.");
             } else {
                 mostrarMsg("Error: " + respuesta);
@@ -611,9 +636,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (Exception e) {
             mostrarMsg("Error: " + e.getMessage());
         }
+
+/*        try {
+            db = new DB(this);
+            String idMascota = jsonArrayMascotas.getJSONObject(posicion).getString("idMascota");
+            String respuesta = db.administrar_Mascota("eliminar", new String[]{idMascota});
+            if (respuesta.equals("ok")) {
+                obtenerDatosMascotas(usuario);
+                mostrarMsg("Registro eliminada.");
+            } else {
+                mostrarMsg("Error: " + respuesta);
+            }
+        } catch (Exception e) {
+            mostrarMsg("Error: " + e.getMessage());
+        }*/
     }
     //AQUI COMIENZA PARA CHATS
-
     private void listarDatos(){
         try{
             databaseReference  = FirebaseDatabase.getInstance().getReference("chats");
@@ -726,6 +764,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     private void buscarChats(){
+
         TextView tempVal = findViewById(R.id.txtBuscarChats);
         tempVal.addTextChangedListener(new TextWatcher() {
             @Override
@@ -734,6 +773,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try{
                 alChat.clear();
                 String buscar = tempVal.getText().toString().trim().toLowerCase();
                 if( buscar.length()<=0){
@@ -747,6 +787,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }
                     ltsChat.setAdapter(new AdaptadorChats(getApplicationContext(), alChat));
+                }
+                }catch (Exception e){
+                    mostrarMsg("No hay chats registrados.");
                 }
             }
             @Override
@@ -888,7 +931,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //mMap.moveCamera(CameraUpdateFactory.newLatLng(ElSalvador));//actualiza el mapa a ubicación indicada
         }
         catch (Exception e){
-            mostrarMsg("Error al obtener la ubicación: "+ e.getMessage());
+            if(layout_veterinarios.getVisibility() == View.VISIBLE) {
+                mostrarMsg("Error al obtener la ubicación: " + e.getMessage());
+            }
         }
         }
     //Por si solo hay un click corto
@@ -930,7 +975,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void mostrarDatosCuenta(){
         try {
-
             Bundle parameters = getIntent().getExtras();
                 TextView txtUsuario = findViewById(R.id.txtUsuarioCuenta);
                 TextView txtNombre = findViewById(R.id.txtNombreCuenta);
@@ -946,12 +990,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mostrarMsg("Error al obtener datos de la cuenta: " + e.getMessage());
         }
     }
-
-
-
     public void editarCuenta(){
         try {
-
 
             Button btnEliminar = findViewById(R.id.btnEliminarCuenta);
 
@@ -983,7 +1023,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     db = new DB(this);
                     String respuesta = db.administrar_cuentas("modificar", datos);
-                    if (respuesta == "Ok"){
+                    if (respuesta != "Ok"){
                         mostrarMsg("Cuenta actualizada con éxito.");
                         Intent intent = new Intent(this, Login.class);
                         startActivity(intent);
@@ -1004,7 +1044,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mostrarMsg("Error al editar cuenta: " + e.getMessage());
         }
     }
-
     public void eliminarCuenta(){
         try {
             Button btnEliminar = findViewById(R.id.btnEliminarCuenta);
@@ -1060,6 +1099,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         temv.setEnabled(avilitado);
 
     }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        TextView txtUsuario = findViewById(R.id.txtUsuarioCuenta);
+        TextView txtNombre = findViewById(R.id.txtNombreCuenta);
+        TextView txtContraseña = findViewById(R.id.txtContraseñaCuenta);
+        TextView txtEmail = findViewById(R.id.txtEmailCuenta);
+
+        outState.putString("idCuenta", txtUsuario.getText().toString());
+        outState.putString("usuarioCuenta", txtUsuario.getText().toString());
+        outState.putString("nombreCuenta", txtNombre.getText().toString());
+        outState.putString("contrasenaCuenta", txtContraseña.getText().toString());
+        outState.putString("correoCuenta", txtEmail.getText().toString());
+    }
+    @Override
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        TextView txtUsuario = findViewById(R.id.txtUsuarioCuenta);
+        TextView txtNombre = findViewById(R.id.txtNombreCuenta);
+        TextView txtContraseña = findViewById(R.id.txtContraseñaCuenta);
+        TextView txtEmail = findViewById(R.id.txtEmailCuenta);
+
+        idCuentaActual = savedInstanceState.getString("idCuenta");
+        txtUsuario.setText(savedInstanceState.getString("usuarioCuenta"));
+        txtNombre.setText(savedInstanceState.getString("nombre"));
+        txtContraseña.setText(savedInstanceState.getString("contrasenaCuenta"));
+        txtEmail.setText(savedInstanceState.getString("correoCuenta"));
+    }
+
 
 }
 

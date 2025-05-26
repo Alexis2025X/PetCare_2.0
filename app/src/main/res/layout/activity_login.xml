@@ -85,7 +85,7 @@
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/color_btn"
         android:textColor="@color/black"
-        android:text="Iniciar Sesión"
+        android:text="Iniciar sesión"
         android:layout_marginTop="460dp"
         android:textSize="18sp"/>
 

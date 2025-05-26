@@ -24,7 +24,10 @@
             android:drawableEnd="@drawable/lupa"
             android:hint="Buscar mascotas"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:singleLine="true"/>
 
            <ListView
                android:id="@+id/ltsMascotas"
@@ -61,7 +64,10 @@
             android:drawableEnd="@drawable/lupa"
             android:hint="Buscar chats"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:singleLine="true"/>
         <ListView
             android:id="@+id/ltsChat"
             android:layout_below="@+id/txtBuscarChats"
@@ -95,7 +101,10 @@
             android:drawableEnd="@drawable/lupa"
             android:hint="Buscar citas"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:singleLine="true"/>
         <ListView
             android:id="@+id/ltsCitas"
             android:layout_below="@+id/txtBuscarCitas"
