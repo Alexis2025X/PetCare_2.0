@@ -20,8 +20,9 @@
 
         <ImageButton
             android:id="@+id/imgFotoMascotaCita"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:background="@color/color_fondo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="80dp"
             android:layout_marginStart="150dp"
             android:src="@mipmap/ic_launcher_round" />

@@ -58,9 +58,6 @@ public class agregar_mascotas extends AppCompatActivity {
         });
         mostarDatosMascotaModificar();
         tomarFoto();
-        
-
-
     }
 
     private void mostarDatosMascotaModificar() {
@@ -68,8 +65,6 @@ public class agregar_mascotas extends AppCompatActivity {
         try {
 
             Bundle parameters = getIntent().getExtras();
-
-
 
             accion = parameters.getString("accion");
 
@@ -139,6 +134,7 @@ public class agregar_mascotas extends AppCompatActivity {
     private void comprovacion(String respuesta){
         if (respuesta.equals("ok")){
                 Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("cargar_layout","mascotas");
                 startActivity(intent);
         }
     }
@@ -152,7 +148,7 @@ public class agregar_mascotas extends AppCompatActivity {
                 fotoMascota = crearImagenMascota();
                 if( fotoMascota!=null ){
                     Uri uriFotoMascota = FileProvider.getUriForFile(agregar_mascotas.this,
-                            "com.example.miprimeraaplicacion.fileprovider", fotoMascota);
+                            "com.alexis.petcare20.fileprovider", fotoMascota);
                     tomarFotoMascotaIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriFotoMascota);
                     startActivityForResult(tomarFotoMascotaIntent, 1);
                 }else{

@@ -78,8 +78,8 @@ public class agregar_chat extends AppCompatActivity {
         });
     }*/
     private void abrirVentana() {
-
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("cargar_layout","chat");
         intent.putExtras(parametros);
         startActivity(intent);
 
