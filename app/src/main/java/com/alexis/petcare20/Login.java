@@ -112,7 +112,7 @@ public class Login extends AppCompatActivity {
         datosCuentaEnUso.setIdCuenta(id);
         datosCuentaEnUso.setNombreCuenta(nombre);
         datosCuentaEnUso.setUsuarioCuenta(usuario);
-        datosCuentaEnUso.setCorreoCuenta(contrasena);
+        datosCuentaEnUso.setContraseñaCuenta(contrasena);
         datosCuentaEnUso.setCorreoCuenta(correo);
 
 
@@ -127,7 +127,6 @@ public class Login extends AppCompatActivity {
                 abrirPantallaPrincipal();
             } else {
                 mostrarMsg("Usuario o contraseña incorrectos.");
-
             }
 
         } catch (Exception e) {

@@ -45,6 +45,7 @@
         android:id="@+id/txtNombreUser"
         android:layout_width="362dp"
         android:layout_height="wrap_content"
+        android:drawableStart="@drawable/etiquetadenombre"
         android:layout_below="@+id/txtTextoCrearCuenta"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
@@ -119,7 +120,7 @@
         app:cardCornerRadius="150dp"
         android:backgroundTint="@color/color_btn"
         android:textColor="@color/black"
-        />
+        android:textSize="18sp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabLogin"

@@ -14,8 +14,9 @@ public class mascotas {
     String raza;
     String problemas_medicos;
     String foto;
+    String usuario;
 
-    public mascotas(String idMascota, String dueño, String nombre, String edad, String raza, String problemas_medicos, String foto) {
+    public mascotas(String idMascota, String dueño, String nombre, String edad, String raza, String problemas_medicos, String foto, String usuario) {
         this.dueño = dueño;
         this.edad = edad;
         this.foto = foto;
@@ -23,6 +24,7 @@ public class mascotas {
         this.nombre = nombre;
         this.problemas_medicos = problemas_medicos;
         this.raza = raza;
+        this.usuario = usuario;
     }
 
     public String getDueño() {
@@ -71,6 +73,13 @@ public class mascotas {
 
     public void setProblemas_medicos(String problemas_medicos) {
         this.problemas_medicos = problemas_medicos;
+    }
+    public String getusuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getRaza() {

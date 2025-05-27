@@ -37,6 +37,7 @@ public class agregar_mascotas extends AppCompatActivity {
     String accion = "nuevo";
     Button btnGuardarMascota;
     Intent tomarFotoMascotaIntent;
+    String cuentaID;
 
     TextView temval;
     @Override
@@ -44,7 +45,7 @@ public class agregar_mascotas extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_agregar_mascotas);
-
+        db = new DB(this);
         img = findViewById(R.id.imgFotoMascotaCita);
 
         fab = findViewById(R.id.fabListaMascotas);
@@ -56,6 +57,8 @@ public class agregar_mascotas extends AppCompatActivity {
         btnGuardarMascota.setOnClickListener(view -> {
             guardarMascota();
         });
+        cuentaID = datosCuentaEnUso.getIdCuenta();
+        //mostrarMsg("Este es el usuario: " + cuentaID);
         mostarDatosMascotaModificar();
         tomarFoto();
     }
@@ -108,8 +111,9 @@ public class agregar_mascotas extends AppCompatActivity {
             mostrarMsg("Por favor, completa todos los campos.");
             return;
         }
-
-        String datosMascota[] = {idMascota, dueño,nombre, edad, raza, problemasMedicos, urlCompletaFoto};
+        cuentaID = datosCuentaEnUso.getIdCuenta();
+        String datosMascota[] = {idMascota, dueño, nombre, edad, raza, problemasMedicos, urlCompletaFoto, cuentaID};
+        //Toast.makeText(getApplicationContext(), "Datos: " + datosMascota[7], Toast.LENGTH_LONG).show();
         db = new DB(this);
 
 
