@@ -109,11 +109,13 @@ public class Login extends AppCompatActivity {
         correo = cInicio.getString(4);
 
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("idCuenta", id);
-        intent.putExtra("nombreCuenta", nombre);
-        intent.putExtra("usuarioCuenta", usuario);
-        intent.putExtra("contrasenaCuenta", contrasena);
-        intent.putExtra("correoCuenta", correo);
+        datosCuentaEnUso.setIdCuenta(id);
+        datosCuentaEnUso.setNombreCuenta(nombre);
+        datosCuentaEnUso.setUsuarioCuenta(usuario);
+        datosCuentaEnUso.setCorreoCuenta(contrasena);
+        datosCuentaEnUso.setCorreoCuenta(correo);
+
+
         startActivity(intent);
     }
 
