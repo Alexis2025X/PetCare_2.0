@@ -57,8 +57,8 @@ public class agregar_mascotas extends AppCompatActivity {
         btnGuardarMascota.setOnClickListener(view -> {
             guardarMascota();
         });
-        cuentaID = getIntent().getStringExtra("idCuenta");
-        mostrarMsg("Este es el usuario: " + cuentaID);
+        cuentaID = datosCuentaEnUso.getIdCuenta();
+        //mostrarMsg("Este es el usuario: " + cuentaID);
         mostarDatosMascotaModificar();
         tomarFoto();
     }
@@ -111,9 +111,9 @@ public class agregar_mascotas extends AppCompatActivity {
             mostrarMsg("Por favor, completa todos los campos.");
             return;
         }
-        cuentaID = getIntent().getStringExtra("idCuenta");
+        cuentaID = datosCuentaEnUso.getIdCuenta();
         String datosMascota[] = {idMascota, dueño, nombre, edad, raza, problemasMedicos, urlCompletaFoto, cuentaID};
-        Toast.makeText(getApplicationContext(), "Datos: " + datosMascota[7], Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Datos: " + datosMascota[7], Toast.LENGTH_LONG).show();
         db = new DB(this);
 
 

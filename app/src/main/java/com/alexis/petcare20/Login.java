@@ -112,7 +112,7 @@ public class Login extends AppCompatActivity {
         datosCuentaEnUso.setIdCuenta(id);
         datosCuentaEnUso.setNombreCuenta(nombre);
         datosCuentaEnUso.setUsuarioCuenta(usuario);
-        datosCuentaEnUso.setCorreoCuenta(contrasena);
+        datosCuentaEnUso.setContraseñaCuenta(contrasena);
         datosCuentaEnUso.setCorreoCuenta(correo);
 
 

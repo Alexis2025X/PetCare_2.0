@@ -59,8 +59,8 @@ public class agregar_citas extends AppCompatActivity {
 
         fab = findViewById(R.id.fabListaCitasMascotas);
         fab.setOnClickListener(view->abrirVentana());
-        cuentaID = getIntent().getStringExtra("idCuenta");
-        mostrarMsg("Este es el usuario: " + cuentaID);
+        cuentaID = datosCuentaEnUso.getIdCuenta();
+       // mostrarMsg("Este es el usuario: " + cuentaID);
         mostrarDatos();
     }
 
@@ -128,22 +128,22 @@ public class agregar_citas extends AppCompatActivity {
             mostrarMsg("Error: Todos los campos son obligatorios.");
             return;
         }
-        cuentaID = getIntent().getStringExtra("idCuenta");
+        cuentaID = datosCuentaEnUso.getIdCuenta();
         if (cuentaID == null || cuentaID.isEmpty()) {
             mostrarMsg("Error: Usuario no encontrado.");
             return;
         }
         String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, cuentaID};
-        Toast.makeText(getApplicationContext(), "Datos: " + datos[5], Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Datos: " + datos[5], Toast.LENGTH_LONG).show();
         String mensaje = db.administrar_Citas(accion, datos);
        // db.administrar_Citas(accion, datos);
 
-        AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
+/*        AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
         confirmacion.setTitle("ERROR");
         confirmacion.setMessage("Este es el error: "+ mensaje.toString());
-        confirmacion.create().show();
+        confirmacion.create().show();*/
 
-        //Toast.makeText(getApplicationContext(), "Registro guardado con exito. "+  mensaje , Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Registro guardado con exito. "+  mensaje , Toast.LENGTH_LONG).show();
         abrirVentana();
 
     }
