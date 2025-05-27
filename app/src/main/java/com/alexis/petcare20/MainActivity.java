@@ -937,11 +937,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 TextView txtContraseña = findViewById(R.id.txtContraseñaCuenta);
                 TextView txtEmail = findViewById(R.id.txtEmailCuenta);
 
-                idCuentaActual = parameters.getString("idCuenta");
-                txtUsuario.setText( parameters.getString("usuarioCuenta"));
-                txtNombre.setText( parameters.getString("nombreCuenta"));
-                txtContraseña.setText(parameters.getString("contrasenaCuenta"));
-                txtEmail.setText(parameters.getString("correoCuenta"));
+                idCuentaActual = datosCuentaEnUso.getIdCuenta();
+                txtUsuario.setText( datosCuentaEnUso.getUsuarioCuenta());
+                txtNombre.setText(datosCuentaEnUso.getNombreCuenta());
+                txtContraseña.setText(datosCuentaEnUso.getContraseñaCuenta());
+                txtEmail.setText(datosCuentaEnUso.getCorreoCuenta());
         } catch (Exception e) {
             mostrarMsg("Error al obtener datos de la cuenta: " + e.getMessage());
         }
@@ -979,14 +979,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         return;
                     }
 
+
+
                     String[] datos = {idCuentaActual,nombre, usuario, contraseña, email};
+
 
                     db = new DB(this);
                     String respuesta = db.administrar_cuentas("modificar", datos);
-                    if (respuesta == "Ok"){
+                    if (respuesta == "ok"){
                         mostrarMsg("Cuenta actualizada con éxito.");
-                        Intent intent = new Intent(this, Login.class);
-                        startActivity(intent);
+                        datosCuentaEnUso.setNombreCuenta(nombre);
+                        datosCuentaEnUso.setUsuarioCuenta(usuario);
+                        datosCuentaEnUso.setCorreoCuenta(contraseña);
+                        datosCuentaEnUso.setCorreoCuenta(email);
+                        mostrarDatosCuenta();
                     }else {
                         mostrarMsg("Error al actualizar la cuenta: " + respuesta);
                     }
