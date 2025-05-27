@@ -163,8 +163,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         lblUbicacion = findViewById(R.id.lblUbicacion);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa);
         mapFragment.getMapAsync(this);
-        cuentaID = getIntent().getStringExtra("idCuenta");
-        mostrarMsg("Bienvenido: " + cuentaID);
+
+        cuentaID = datosCuentaEnUso.getIdCuenta();
+        //mostrarMsg("Bienvenido: " + cuentaID);
             //para mascotas
             obtenerDatosMascotas(cuentaID);
             buscarMascotas();
@@ -263,13 +264,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     private void abrirAgregarCitas(){
         Intent intent = new Intent(this, agregar_citas.class);
-        intent.putExtra("idCuenta", cuentaID);
+        cuentaID = datosCuentaEnUso.getIdCuenta();
         intent.putExtras(parametros);
         startActivity(intent);
     }
     private void abrirAgregarMascotas(){
         Intent intent = new Intent(this, agregar_mascotas.class);
-        intent.putExtra("idCuenta", cuentaID);
+        cuentaID = datosCuentaEnUso.getIdCuenta();
         intent.putExtras(parametros);
         startActivity(intent);
     }
