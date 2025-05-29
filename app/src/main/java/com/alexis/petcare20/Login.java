@@ -110,7 +110,7 @@ public class Login extends AppCompatActivity {
         correo = cInicio.getString(4);
         llave = cInicio.getString(5);
 
-        Intent intent = new Intent(this, agregar_citas.class);
+        Intent intent = new Intent(this, MainActivity.class);
         datosCuentaEnUso.setIdCuenta(id);
         datosCuentaEnUso.setNombreCuenta(nombre);
         datosCuentaEnUso.setUsuarioCuenta(usuario);
