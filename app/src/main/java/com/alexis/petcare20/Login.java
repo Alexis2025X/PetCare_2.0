@@ -125,7 +125,6 @@ public class Login extends AppCompatActivity {
     private void inicioDeSesion(String user, String password) {
         try {
             cInicio = db.iniciarSesion(user, password);
-
             if (cInicio.moveToFirst()) {
                 abrirPantallaPrincipal();
             } else {

@@ -30,6 +30,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class agregar_mascotas extends AppCompatActivity {
     FloatingActionButton fab;
@@ -124,15 +126,43 @@ public class agregar_mascotas extends AppCompatActivity {
 
         String datosMascota[] = {idMascota, dueño, nombre, edad, raza, problemasMedicos, urlCompletaFoto, cuentaID,miKey};
         //Toast.makeText(getApplicationContext(), "Datos: " + datosMascota[7], Toast.LENGTH_LONG).show();
-        db = new DB(this);
-
-
-
         if (accion.equals("modificar")) {
+           try {
+               db = new DB(this);
+               String respuesta =  db.administrar_Mascota("modificar", datosMascota);
+               mostrarMsg("Estado del registro: " + respuesta );
 
-          String respuesta =  db.administrar_Mascota("modificar", datosMascota);
-            mostrarMsg("Estado del registro: " + respuesta );
-            comprovacion(respuesta);
+               try {  //comienzo de modificacion en firebase
+                   Map<String, Object> updates = new HashMap<>();
+                   updates.put("idMascota",idMascota );
+                   updates.put("dueño", dueño);
+                   updates.put("nombre", nombre);
+                   updates.put("raza", raza);
+                   updates.put("problemas_medicos", problemasMedicos);
+                   updates.put("foto", urlCompletaFoto);
+                   updates.put("usuario", cuentaID);
+                   updates.put("llave", miKey);
+                   databaseReference = FirebaseDatabase.getInstance().getReference("mascotas");
+                   if( miKey!= null || miKey == ""){
+                       databaseReference.child(miKey).updateChildren(updates).addOnSuccessListener(success->{
+                           mostrarMsg("Registro actualizado con exito.");
+                       }).addOnFailureListener(failure->{
+                           mostrarMsg("Error al registrar datos: "+failure.getMessage());
+                       });
+                   } else {
+                       mostrarMsg("Error al guardar modificaciones en firebase.");
+                   }
+
+
+               }catch (Exception e){
+                   mostrarMsg("Error al modificar: " + e.getMessage());
+               }
+               comprovacion(respuesta);
+           }catch (Exception e){
+               mostrarMsg("Error al modificar: " + e.getMessage());
+           }
+
+
         } else {
 
             String respuesta =   db.administrar_Mascota("nuevo", datosMascota);
