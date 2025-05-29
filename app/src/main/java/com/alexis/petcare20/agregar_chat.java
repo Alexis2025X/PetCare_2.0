@@ -37,7 +37,8 @@ public class agregar_chat extends AppCompatActivity {
     TextView tempVal;
     String accion = "nuevo", idChat = "", id="", rev="";
     ImageView img;
-    String urlCompletaFoto = "", getUrlCompletaFotoFirestore = "";
+    String urlCompletaFoto = "";
+    //String urlCompletaFoto = "", getUrlCompletaFotoFirestore = "";
     Intent tomarFotoIntent;
     detectarInternet di;
     DatabaseReference databaseReference;
@@ -165,13 +166,13 @@ public class agregar_chat extends AppCompatActivity {
             tempVal = findViewById(R.id.txtDui);
             String dui = tempVal.getText().toString();
 
-            databaseReference = FirebaseDatabase.getInstance().getReference("chats");
+            databaseReference = FirebaseDatabase.getInstance().getReference("Persona_chats");
             String key = databaseReference.push().getKey();
 
             if( miToken.equals("") || miToken==null ){
                 obtenerToken();
             }
-            chats chat = new chats(idChat, nombre, direccion, telefono, email, dui, urlCompletaFoto, getUrlCompletaFotoFirestore, miToken);
+            chats chat = new chats(idChat, nombre, direccion, telefono, email, dui, urlCompletaFoto, miToken);
             if( key!= null ){
                 databaseReference.child(key).setValue(chat).addOnSuccessListener(success->{
                     mostrarMsg("Registro guardado con exito.");
