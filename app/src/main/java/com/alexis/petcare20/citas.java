@@ -9,11 +9,12 @@ public class citas {
     String clinica;
     String nota;
     String usuario;
+    String llave;
 
 /*    String foto;
     String miToken;*/
 
-    public citas(String idCitas, String nombreMascota, String fecha, String clinica, String nota, String usuario) {
+    public citas(String idCitas, String nombreMascota, String fecha, String clinica, String nota, String usuario,String llave) {
     //public citas(String idCitas, String nombreMascota, String fecha, String clinica, String nota, String foto, String miToken) {
         this.idCitas = idCitas;
         this.nombreMascota = nombreMascota;
@@ -21,6 +22,7 @@ public class citas {
         this.clinica = clinica;
         this.nota = nota;
         this.usuario = usuario;
+        this.llave = llave;
 
         //this.miToken = miToken;
     }

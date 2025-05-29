@@ -14,6 +14,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.stream.Stream;
 
@@ -23,6 +26,8 @@ public class crear_cuenta extends AppCompatActivity {
     Button btn;
     DB db;
     Cursor cComprovacionUser;
+    String miToken = "";
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,7 @@ public class crear_cuenta extends AppCompatActivity {
             crearCuenta();
             abrirLogin();
         });
+        obtenerToken();
     }
 
     private void crearCuenta() {
@@ -60,12 +66,40 @@ public class crear_cuenta extends AppCompatActivity {
         if (comprovacionUser(usuario)) {
             return;
         }
-        db = new DB(this);
-        String[] datos = {"", nombre, usuario, contraseña, correo};
-        String respuesta = db.administrar_cuentas("nuevo", datos);
-        mostrarMsg("Estado de la cuenta: " + respuesta);
-    }
+        try {
+            databaseReference = FirebaseDatabase.getInstance().getReference("cuentas");
+            String key = databaseReference.push().getKey();
 
+            if (key == null) {
+               key = "";
+            }
+            db = new DB(this);
+            String[] datos = {"", nombre, usuario, contraseña, correo,key};
+            String respuesta = db.administrar_cuentas("nuevo", datos);
+            mostrarMsg("Estado de la cuenta: " + respuesta);
+
+            try {
+
+
+                datosCuentaEnUso cuenta = new datosCuentaEnUso("", nombre, usuario, contraseña, correo,key);
+                if( key!= null ){
+                    databaseReference.child(key).setValue(cuenta).addOnSuccessListener(success->{
+                        mostrarMsg("Registro guardado con exito.");
+                    }).addOnFailureListener(failure->{
+                        mostrarMsg("Error al registrar datos: "+failure.getMessage());
+                    });
+                } else {
+                    mostrarMsg("Error al guardar en firebase.");
+                }
+
+            } catch (Exception e) {
+                mostrarMsg("Remote Error: " + e.getMessage());
+            }
+
+        }catch (Exception e) {
+            mostrarMsg("Local Error: " + e.getMessage());
+        }
+    }
     private boolean comprovacionUser(String user) {
         try {
             db = new DB(this);
@@ -93,4 +127,17 @@ public class crear_cuenta extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 
+    private void obtenerToken(){
+        try{
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(tarea->{
+                if(!tarea.isSuccessful()){
+                    mostrarMsg("Error al obtener token: "+tarea.getException().getMessage());
+                }else{
+                    miToken = tarea.getResult();
+                }
+            });
+        }catch (Exception e){
+            mostrarMsg("Error al obtener token: "+e.getMessage());
+        }
+    }
 }

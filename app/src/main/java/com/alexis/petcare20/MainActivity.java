@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     int posicion = 0;
     DB db;
     String idCuentaActual = "";
-    String miToken = "";
+    String miToken = "", llaveCuenta = "";
     detectarInternet di;
     FloatingActionButton fabAgregarCitas, fabAgregarMascotas, fabAgregarChat;
     ListView ltsCitas, ltsMascotas, ltsChat;
@@ -426,6 +426,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         jsonObject.put("clinica", cCitas.getString(3));
                         jsonObject.put("nota", cCitas.getString(4));
                         jsonObject.put("cuentaID", cCitas.getString(5));
+                        jsonObject.put("llave", cCitas.getString(6));
                         jsonArray.put(jsonObject);
 
                         //mostrarMsg(cCitas.getString(4) + "buyftyf");
@@ -458,7 +459,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 jsonObject.getString("fecha"),
                                 jsonObject.getString("clinica"),
                                 jsonObject.getString("nota"),
-                                jsonObject.getString("cuentaID")
+                                jsonObject.getString("cuentaID"),
+                                jsonObject.getString("llave")
+
                                 //jsonObject.getString("foto")
                         );
                         alCitas.add(misCitas);
@@ -531,6 +534,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     jsonObject.put("problemas_medicos", cMascotas.getString(5));
                     jsonObject.put("foto", cMascotas.getString(6));
                     jsonObject.put("cuentaID", cMascotas.getString(7));
+                    jsonObject.put("llave", cMascotas.getString(8));
                     jsonArrayMascotas.put(jsonObject);
                 }while(cMascotas.moveToNext());
 
@@ -568,7 +572,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             jsonObject.getString("raza"),
                             jsonObject.getString("problemas_medicos"),
                             jsonObject.getString("foto"),
-                            jsonObject.getString("cuentaID")
+                            jsonObject.getString("cuentaID"),
+                            jsonObject.getString("llave")
                     );
 
 
@@ -983,6 +988,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 TextView txtEmail = findViewById(R.id.txtEmailCuenta);
 
                 idCuentaActual = datosCuentaEnUso.getIdCuenta();
+                llaveCuenta = datosCuentaEnUso.getLlaveCuenta();
                 txtUsuario.setText( datosCuentaEnUso.getUsuarioCuenta());
                 txtNombre.setText(datosCuentaEnUso.getNombreCuenta());
                 txtContraseña.setText(datosCuentaEnUso.getContraseñaCuenta());

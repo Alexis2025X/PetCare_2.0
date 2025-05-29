@@ -1,7 +1,7 @@
 package com.alexis.petcare20;
 
 
-
+import com.google.gson.internal.bind.JsonTreeReader;
 
 public class mascotas {
 
@@ -15,8 +15,9 @@ public class mascotas {
     String problemas_medicos;
     String foto;
     String usuario;
+    String llave;
 
-    public mascotas(String idMascota, String dueño, String nombre, String edad, String raza, String problemas_medicos, String foto, String usuario) {
+    public mascotas(String idMascota, String dueño, String nombre, String edad, String raza, String problemas_medicos, String foto, String usuario, String llave) {
         this.dueño = dueño;
         this.edad = edad;
         this.foto = foto;
@@ -25,6 +26,7 @@ public class mascotas {
         this.problemas_medicos = problemas_medicos;
         this.raza = raza;
         this.usuario = usuario;
+        this.llave = llave;
     }
 
     public String getDueño() {

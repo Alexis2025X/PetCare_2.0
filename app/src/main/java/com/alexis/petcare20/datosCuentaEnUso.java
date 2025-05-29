@@ -6,7 +6,24 @@ public class datosCuentaEnUso {
     public static String usuarioCuenta;
     public static String contraseñaCuenta;
     public static String correoCuenta;
+    public static String llaveCuenta;
 
+
+     String constructorIdCuenta;
+     String constructorNombreCuenta;
+     String constructorUsuarioCuenta;
+     String constructorContraseñaCuenta;
+     String constructorCorreoCuenta;
+     String constructorKeyCuenta;
+
+    public datosCuentaEnUso(String constructorIdCuenta, String constructorNombreCuenta, String constructorUsuarioCuenta, String constructorContraseñaCuenta, String constructorCorreoCuenta, String constructorKeyCuenta) {
+        this.constructorContraseñaCuenta = constructorContraseñaCuenta;
+        this.constructorCorreoCuenta = constructorCorreoCuenta;
+        this.constructorIdCuenta = constructorIdCuenta;
+        this.constructorNombreCuenta = constructorNombreCuenta;
+        this.constructorUsuarioCuenta = constructorUsuarioCuenta;
+        this.constructorKeyCuenta = constructorKeyCuenta;
+    }
 
     public static String getContraseñaCuenta() {
         return contraseñaCuenta;
@@ -46,5 +63,13 @@ public class datosCuentaEnUso {
 
     public static void setUsuarioCuenta(String usuarioCuenta) {
         datosCuentaEnUso.usuarioCuenta = usuarioCuenta;
+    }
+
+    public static String getLlaveCuenta() {
+        return llaveCuenta;
+    }
+
+    public static void setLlaveCuenta(String llaveCuenta) {
+        datosCuentaEnUso.llaveCuenta = llaveCuenta;
     }
 }
