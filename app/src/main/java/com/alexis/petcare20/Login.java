@@ -110,7 +110,7 @@ public class Login extends AppCompatActivity {
         correo = cInicio.getString(4);
         llave = cInicio.getString(5);
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, agregar_citas.class);
         datosCuentaEnUso.setIdCuenta(id);
         datosCuentaEnUso.setNombreCuenta(nombre);
         datosCuentaEnUso.setUsuarioCuenta(usuario);
@@ -125,7 +125,6 @@ public class Login extends AppCompatActivity {
     private void inicioDeSesion(String user, String password) {
         try {
             cInicio = db.iniciarSesion(user, password);
-
             if (cInicio.moveToFirst()) {
                 abrirPantallaPrincipal();
             } else {

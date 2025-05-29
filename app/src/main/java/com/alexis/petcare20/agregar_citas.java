@@ -32,6 +32,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class agregar_citas extends AppCompatActivity {
 /*    private MainActivity mainActivity; // Referencia a MainActivity
@@ -145,9 +147,41 @@ public class agregar_citas extends AppCompatActivity {
 
 
         if (accion == "modificar") {
+            try {
+
+
             String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, cuentaID,miKey};
             String mensaje = db.administrar_Citas(accion, datos);
             mostrarMsg("Estado de la cita: " + mensaje);
+            //comienzo de actualizacion en fireBase
+
+            try {
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("idCitas",idCitas );
+                updates.put("nombreMascota", nombreMascota);
+                updates.put("fecha", fecha);
+                updates.put("clinica", clinica);
+                updates.put("nota", nota);
+                updates.put("usuario", cuentaID);
+                updates.put("llave", miKey);
+
+                if( miKey!= null || miKey == ""){
+                    databaseReference = FirebaseDatabase.getInstance().getReference("citas");
+                    databaseReference.child(miKey).updateChildren(updates).addOnSuccessListener(success->{
+                        mostrarMsg("Registro actualizado con exito.");
+                    }).addOnFailureListener(failure->{
+                        mostrarMsg("Error al actualizar datos: "+failure.getMessage());
+                    });
+                } else {
+                    mostrarMsg("Error al guardar en firebase.");
+                }
+            } catch (Exception e) {
+                mostrarMsg("ERROR al actualizar en Firebase: " + e.getMessage());
+            }
+
+            } catch (Exception e) {
+                mostrarMsg("Error al actualizar: " + e.getMessage());
+            }
         }else{
             if( miToken.equals("") || miToken==null ){
                 obtenerToken();

@@ -50,6 +50,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
@@ -1026,24 +1028,56 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         return;
                     }
 
+                    try {
+                        String[] datos = {idCuentaActual,nombre, usuario, contraseña, email,llaveCuenta};
+                        db = new DB(this);
+                        String respuesta = db.administrar_cuentas("modificar", datos);
+
+                        try {
+
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("constructorIdCuenta",idCuentaActual );
+                            updates.put("constructorNombreCuenta", nombre);
+                            updates.put("constructorUsuarioCuenta", usuario);
+                            updates.put("constructorContraseñaCuenta", contraseña);
+                            updates.put("constructorCorreoCuenta", email);
+                            updates.put("constructorKeyCuenta", llaveCuenta);
 
 
-                    String[] datos = {idCuentaActual,nombre, usuario, contraseña, email};
+
+                            if( llaveCuenta!= null || llaveCuenta == ""){
+                                databaseReference = FirebaseDatabase.getInstance().getReference("citas");
+                                databaseReference.child(llaveCuenta).updateChildren(updates).addOnSuccessListener(success->{
+                                    mostrarMsg("Registro actualizado con exito.");
+                                }).addOnFailureListener(failure->{
+                                    mostrarMsg("Error al actualizar datos: "+failure.getMessage());
+                                });
+                            } else {
+                                mostrarMsg("Error al guardar en firebase.");
+                            }
+
+                        } catch (Exception e) {
+                            mostrarMsg("Error al actualizar la cuenta en fireBase: " + e.getMessage());
+                        }
 
 
-                    db = new DB(this);
-                    String respuesta = db.administrar_cuentas("modificar", datos);
-
-                    if (respuesta == "ok"){
-                        mostrarMsg("Cuenta actualizada con éxito.");
-                        datosCuentaEnUso.setNombreCuenta(nombre);
-                        datosCuentaEnUso.setUsuarioCuenta(usuario);
-                        datosCuentaEnUso.setCorreoCuenta(contraseña);
-                        datosCuentaEnUso.setCorreoCuenta(email);
-                        mostrarDatosCuenta();
-                    }else {
-                        mostrarMsg("Error al actualizar la cuenta: " + respuesta);
+                        if (respuesta == "ok"){
+                            mostrarMsg("Cuenta actualizada con éxito.");
+                            datosCuentaEnUso.setNombreCuenta(nombre);
+                            datosCuentaEnUso.setUsuarioCuenta(usuario);
+                            datosCuentaEnUso.setCorreoCuenta(contraseña);
+                            datosCuentaEnUso.setCorreoCuenta(email);
+                            mostrarDatosCuenta();
+                        }else {
+                            mostrarMsg("Error al actualizar la cuenta: " + respuesta);
+                        }
+                    } catch (Exception e) {
+                        mostrarMsg("Error al actualizar la cuenta: " + e.getMessage());
                     }
+
+
+
+
                 } catch (Exception e) {
                     mostrarMsg("Error al actualizar la cuenta: " + e.getMessage());
                 }
@@ -1067,6 +1101,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 btnEliminar.setText("Eliminar Cuenta");
                 btnEditar.setText("Editar Cuenta");
                 enabledCuentas(false);
+                mostrarDatosCuenta();
             }else {
                 try{
                     AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);

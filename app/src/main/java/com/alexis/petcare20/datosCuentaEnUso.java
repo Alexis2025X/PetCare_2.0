@@ -11,7 +11,56 @@ public class datosCuentaEnUso {
 
      String constructorIdCuenta;
      String constructorNombreCuenta;
-     String constructorUsuarioCuenta;
+
+    public String getConstructorContraseñaCuenta() {
+        return constructorContraseñaCuenta;
+    }
+
+    public void setConstructorContraseñaCuenta(String constructorContraseñaCuenta) {
+        this.constructorContraseñaCuenta = constructorContraseñaCuenta;
+    }
+
+    public String getConstructorCorreoCuenta() {
+        return constructorCorreoCuenta;
+    }
+
+    public void setConstructorCorreoCuenta(String constructorCorreoCuenta) {
+        this.constructorCorreoCuenta = constructorCorreoCuenta;
+    }
+
+    public String getConstructorIdCuenta() {
+        return constructorIdCuenta;
+    }
+
+    public void setConstructorIdCuenta(String constructorIdCuenta) {
+        this.constructorIdCuenta = constructorIdCuenta;
+    }
+
+    public String getConstructorKeyCuenta() {
+        return constructorKeyCuenta;
+    }
+
+    public void setConstructorKeyCuenta(String constructorKeyCuenta) {
+        this.constructorKeyCuenta = constructorKeyCuenta;
+    }
+
+    public String getConstructorNombreCuenta() {
+        return constructorNombreCuenta;
+    }
+
+    public void setConstructorNombreCuenta(String constructorNombreCuenta) {
+        this.constructorNombreCuenta = constructorNombreCuenta;
+    }
+
+    public String getConstructorUsuarioCuenta() {
+        return constructorUsuarioCuenta;
+    }
+
+    public void setConstructorUsuarioCuenta(String constructorUsuarioCuenta) {
+        this.constructorUsuarioCuenta = constructorUsuarioCuenta;
+    }
+
+    String constructorUsuarioCuenta;
      String constructorContraseñaCuenta;
      String constructorCorreoCuenta;
      String constructorKeyCuenta;
