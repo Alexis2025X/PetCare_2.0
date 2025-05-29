@@ -37,9 +37,9 @@
         <activity
             android:name=".agregar_chat"
             android:exported="false" />
-<!--        <activity
-            android:name=".mi_cuenta"
-            android:exported="false" />-->
+        <activity
+            android:name=".chat_funcionalidad"
+            android:exported="false" />
         <activity
             android:name=".agregar_mascotas"
             android:exported="false" />
