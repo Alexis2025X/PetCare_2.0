@@ -27,11 +27,11 @@ public class DB extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     //Cración de la base de datos
     //tabla cuentas
-    private static final String SQLdbCuentas = "CREATE TABLE Cuentas (idCuenta INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, usuario TEXT, contraseña TEXT, email TEXT)";
+    private static final String SQLdbCuentas = "CREATE TABLE Cuentas (idCuenta INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, usuario TEXT, contraseña TEXT, email TEXT, llave TEXT)";
     //tabla mascotas
-    private static final String SQLdbMascotas = "CREATE TABLE Mascotas (idMascota INTEGER PRIMARY KEY AUTOINCREMENT, dueño TEXT, nombre TEXT, edad TEXT,raza TEXT,problemas_medicos TEXT,foto TEXT, usuario TEXT)";
+    private static final String SQLdbMascotas = "CREATE TABLE Mascotas (idMascota INTEGER PRIMARY KEY AUTOINCREMENT, dueño TEXT, nombre TEXT, edad TEXT,raza TEXT,problemas_medicos TEXT,foto TEXT, usuario TEXT,llave TEXT)";
     //tabla de Citas
-    private static final String SQLdbCitas = "CREATE TABLE Citas (idCitas INTEGER PRIMARY KEY AUTOINCREMENT, nombreMascota  TEXT, fecha DATETIME, clinica TEXT, nota TEXT, usuario TEXT)";
+    private static final String SQLdbCitas = "CREATE TABLE Citas (idCitas INTEGER PRIMARY KEY AUTOINCREMENT, nombreMascota  TEXT, fecha DATETIME, clinica TEXT, nota TEXT, usuario TEXT, llave TEXT)";
     //tabla de Chats esta ira a Firebase
     private static final String SQLdbChats = "CREATE TABLE Chat (idChat TEXT, nombre TEXT, direccion TEXT, telefono TEXT, email TEXT, dui TEXT, urlFoto TEXT, miToken TEXT)";
 
@@ -62,10 +62,10 @@ public class DB extends SQLiteOpenHelper {
             String mensaje = "ok", sql = "";
             switch (accion) {
                 case "nuevo":
-                    sql = "INSERT INTO Cuentas (nombre, usuario, contraseña, email) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4]+"')";
+                    sql = "INSERT INTO Cuentas (nombre, usuario, contraseña, email,llave) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4]+"', '" + datos[5]+"')";
                     break;
                 case "modificar":
-                    sql = "UPDATE Cuentas SET nombre = '" + datos[1] + "', usuario = '" + datos[2] + "', contraseña = '" + datos[3] + "', email = '" + datos[4] + "' WHERE idCuenta = " + datos[0];
+                    sql = "UPDATE Cuentas SET nombre = '" + datos[1] + "', usuario = '" + datos[2] + "', contraseña = '" + datos[3] + "', email = '" + datos[4] + "', llave = '" + datos[5] + "' WHERE idCuenta = " + datos[0];
                     break;
                 case "eliminar":
                     sql = "DELETE FROM Cuentas WHERE idCuenta = " + datos[0];
@@ -89,11 +89,11 @@ public class DB extends SQLiteOpenHelper {
             String mensaje = "ok", sql = "";
             switch (accion) {
                 case "nuevo":
-                    sql = "INSERT INTO Mascotas (dueño, nombre, edad, raza, problemas_medicos, foto, usuario) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4]+ "', '" + datos[5] + "', '" + datos[6] + "', '" + datos[7] + "')";
+                    sql = "INSERT INTO Mascotas (dueño, nombre, edad, raza, problemas_medicos, foto, usuario,llave) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4]+ "', '" + datos[5] + "', '" + datos[6] + "', '" + datos[7] + "', '" + datos[8] + "')";
                     break;
                 case "modificar":
 
-                    sql = "UPDATE Mascotas SET dueño = '" + datos[1] + "', nombre = '" + datos[2] + "', edad = '" + datos[3] + "', raza = '" + datos[4] + "', problemas_medicos = '" + datos[5] + "', foto = '" + datos[6] + "', usuario = '" + datos[7] + "' WHERE idMascota = " + datos[0];
+                    sql = "UPDATE Mascotas SET dueño = '" + datos[1] + "', nombre = '" + datos[2] + "', edad = '" + datos[3] + "', raza = '" + datos[4] + "', problemas_medicos = '" + datos[5] + "', foto = '" + datos[6] + "', usuario = '" + datos[7] + "', llave = '" + datos[8] + "' WHERE idMascota = " + datos[0];
 
                     break;
                 case "eliminar":
@@ -118,10 +118,10 @@ public class DB extends SQLiteOpenHelper {
             String mensaje = "ok", sql = "";
             switch (accion) {
                 case "nuevo":
-                    sql = "INSERT INTO Citas (nombreMascota, fecha, clinica, nota, usuario) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4]+ "', '" + datos[5]+ "')";
+                    sql = "INSERT INTO Citas (nombreMascota, fecha, clinica, nota, usuario,llave) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4]+ "', '" + datos[5]+ "', '" + datos[6]+ "')";
                     break;
                 case "modificar":
-                    sql = "UPDATE Citas SET nombreMascota = '" + datos[1] + "', fecha = '" + datos[2] + "', clinica = '" + datos[3] + "', nota = '" + datos[4] + "', usuario = '" + datos[5] + "' WHERE idCitas = " + datos[0];
+                    sql = "UPDATE Citas SET nombreMascota = '" + datos[1] + "', fecha = '" + datos[2] + "', clinica = '" + datos[3] + "', nota = '" + datos[4] + "', usuario = '" + datos[5] + "', llave = '" + datos[6] + "' WHERE idCitas = " + datos[0];
                     break;
                 case "eliminar":
                     sql = "DELETE FROM Citas WHERE idCitas = " + datos[0];

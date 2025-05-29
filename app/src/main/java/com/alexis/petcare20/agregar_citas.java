@@ -22,6 +22,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +47,10 @@ public class agregar_citas extends AppCompatActivity {
     String accion = "nuevo";
     String idCitas = "";
     String cuentaID, user;
+    String miToken = "";
 
+    String miKey = "";
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +80,7 @@ public class agregar_citas extends AppCompatActivity {
                 JSONObject datos = new JSONObject(parametros.getString("citas"));
 
                 idCitas = datos.getString("idCitas");
+                miKey = datos.getString("llave");
                 TextView tempVal = findViewById(R.id.txtNombreCitaMascota);
                 mostrarMsg(datos.getString("nombre") + "sfsdf");
 
@@ -133,9 +140,46 @@ public class agregar_citas extends AppCompatActivity {
             mostrarMsg("Error: Usuario no encontrado.");
             return;
         }
-        String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, cuentaID};
+
         //Toast.makeText(getApplicationContext(), "Datos: " + datos[5], Toast.LENGTH_LONG).show();
-        String mensaje = db.administrar_Citas(accion, datos);
+
+
+        if (accion == "modificar") {
+            String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, cuentaID,miKey};
+            String mensaje = db.administrar_Citas(accion, datos);
+            mostrarMsg("Estado de la cita: " + mensaje);
+        }else{
+            if( miToken.equals("") || miToken==null ){
+                obtenerToken();
+            }
+            try{
+
+                databaseReference = FirebaseDatabase.getInstance().getReference("citas");
+                String key = databaseReference.push().getKey();
+
+                if (key == null) {
+                    key = "";
+                }
+
+                String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, cuentaID,key};
+                String mensaje = db.administrar_Citas(accion, datos);
+
+                citas cita = new citas(idCitas, nombreMascota, fecha, clinica, nota, cuentaID,key);
+                if( key!= null ){
+                    databaseReference.child(key).setValue(cita).addOnSuccessListener(success->{
+                        mostrarMsg("Registro guardado con exito.");
+                    }).addOnFailureListener(failure->{
+                        mostrarMsg("Error al registrar datos: "+failure.getMessage());
+                    });
+                } else {
+                    mostrarMsg("Error al guardar en firebase.");
+                }
+                mostrarMsg("Estado de la cita: " + mensaje);
+            } catch (Exception e) {
+                mostrarMsg("Error: " + e.getMessage());
+            }
+        }
+
        // db.administrar_Citas(accion, datos);
 
 /*        AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
@@ -143,7 +187,6 @@ public class agregar_citas extends AppCompatActivity {
         confirmacion.setMessage("Este es el error: "+ mensaje.toString());
         confirmacion.create().show();*/
 
-        Toast.makeText(getApplicationContext(), "Registro guardado con exito. "+  mensaje , Toast.LENGTH_LONG).show();
         abrirVentana();
 
     }
@@ -157,4 +200,18 @@ public class agregar_citas extends AppCompatActivity {
     private void mostrarMsg(String msg){
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
+    private void obtenerToken(){
+        try{
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(tarea->{
+                if(!tarea.isSuccessful()){
+                    mostrarMsg("Error al obtener token: "+tarea.getException().getMessage());
+                }else{
+                    miToken = tarea.getResult();
+                }
+            });
+        }catch (Exception e){
+            mostrarMsg("Error al obtener token: "+e.getMessage());
+        }
+    }
+
 }
