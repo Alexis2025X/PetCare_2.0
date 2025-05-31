@@ -8,19 +8,21 @@ public class citas {
     String fecha;
     String clinica;
     String nota;
+    String foto;
     String usuario;
     String llave;
 
 /*    String foto;
     String miToken;*/
 
-    public citas(String idCitas, String nombreMascota, String fecha, String clinica, String nota, String usuario,String llave) {
+    public citas(String idCitas, String nombreMascota, String fecha, String clinica, String nota, String foto, String usuario,String llave) {
     //public citas(String idCitas, String nombreMascota, String fecha, String clinica, String nota, String foto, String miToken) {
         this.idCitas = idCitas;
         this.nombreMascota = nombreMascota;
         this.fecha = fecha;
         this.clinica = clinica;
         this.nota = nota;
+        this.foto = foto;
         this.usuario = usuario;
         this.llave = llave;
 
@@ -82,11 +84,11 @@ public class citas {
     public void setUsuario(String usuario) {
         this.usuario = usuario;
     }
-/*    public String getFoto() {
+    public String getFoto() {
         return foto;
     }
 
     public void setFoto(String foto) {
         this.foto = foto;
-    }*/
+    }
 }

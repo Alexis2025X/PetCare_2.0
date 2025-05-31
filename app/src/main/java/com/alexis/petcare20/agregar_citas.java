@@ -49,6 +49,9 @@ public class agregar_citas extends AppCompatActivity {
     String accion = "nuevo";
     String idCitas = "";
     String cuentaID, user;
+    ImageView img;
+    String urlCompletaFoto = "";
+    Intent tomarFotoIntent;
     String miToken = "";
 
     String miKey = "";
@@ -58,6 +61,7 @@ public class agregar_citas extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_citas);
+        img = findViewById(R.id.imgFotoMascotaCita);
 
         db = new DB(this);
         //usuario = getIntent().getStringExtra("usuarioCuenta");
@@ -70,8 +74,26 @@ public class agregar_citas extends AppCompatActivity {
         cuentaID = datosCuentaEnUso.getIdCuenta();
        // mostrarMsg("Este es el usuario: " + cuentaID);
         mostrarDatos();
+        try {
+            tomarFoto();
+        }catch (Exception e){
+            mostrarMsg("Error al tomar foto: "+e.getMessage());
+        }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        try{
+            if( requestCode==1 && resultCode==RESULT_OK ){
+                img.setImageURI(Uri.parse(urlCompletaFoto));
+            }else{
+                mostrarMsg("No se tomo la foto.");
+            }
+        }catch (Exception e){
+            mostrarMsg("Error al tomar la foto: "+e.getMessage());
+        }
+    }
     private void mostrarDatos(){
         try {
             Bundle parametros = getIntent().getExtras();
@@ -97,6 +119,9 @@ public class agregar_citas extends AppCompatActivity {
 
                 tempVal = findViewById(R.id.txtNota);
                 tempVal.setText(datos.getString("nota"));
+
+                urlCompletaFoto = datos.getString("urlFoto");
+                img.setImageURI(Uri.parse(urlCompletaFoto));
             }
 
         }catch (Exception e){
@@ -162,6 +187,7 @@ public class agregar_citas extends AppCompatActivity {
                 updates.put("fecha", fecha);
                 updates.put("clinica", clinica);
                 updates.put("nota", nota);
+                updates.put("urlFoto", urlCompletaFoto);
                 updates.put("usuario", cuentaID);
                 updates.put("llave", miKey);
 
@@ -195,10 +221,10 @@ public class agregar_citas extends AppCompatActivity {
                     key = "";
                 }
 
-                String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, cuentaID,key};
+                String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, urlCompletaFoto, cuentaID,key};
                 String mensaje = db.administrar_Citas(accion, datos);
 
-                citas cita = new citas(idCitas, nombreMascota, fecha, clinica, nota, cuentaID,key);
+                citas cita = new citas(idCitas, nombreMascota, fecha, clinica, nota, urlCompletaFoto, cuentaID,key);
                 if( key!= null ){
                     databaseReference.child(key).setValue(cita).addOnSuccessListener(success->{
                         mostrarMsg("Registro guardado con exito.");
@@ -246,6 +272,36 @@ public class agregar_citas extends AppCompatActivity {
         }catch (Exception e){
             mostrarMsg("Error al obtener token: "+e.getMessage());
         }
+    }
+    private void tomarFoto(){
+        img.setOnClickListener(view->{
+            tomarFotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File fotoChat = null;
+            try{
+                fotoChat = crearImagenCita();
+                if( fotoChat!=null ){
+                    Uri uriFotoAimgo = FileProvider.getUriForFile(agregar_citas.this,
+                            "com.alexis.petcare20.fileprovider", fotoChat);
+                    tomarFotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriFotoAimgo);
+                    startActivityForResult(tomarFotoIntent, 1);
+                }else{
+                    mostrarMsg("No se pudo crear la imagen.");
+                }
+            }catch (Exception e){
+                mostrarMsg("Error al tomar foto: "+e.getMessage());
+            }
+        });
+    }
+    private File crearImagenCita() throws Exception{
+        String fechaHoraMs = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()),
+                fileName = "imagen_"+ fechaHoraMs+"_";
+        File dirAlmacenamiento = getExternalFilesDir(Environment.DIRECTORY_DCIM);
+        if( dirAlmacenamiento.exists()==false ){
+            dirAlmacenamiento.mkdir();
+        }
+        File image = File.createTempFile(fileName, ".jpg", dirAlmacenamiento);
+        urlCompletaFoto = image.getAbsolutePath();
+        return image;
     }
 
 }
