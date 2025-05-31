@@ -26,8 +26,11 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class agregar_chat extends AppCompatActivity {
     FloatingActionButton fab;
@@ -173,14 +176,55 @@ public class agregar_chat extends AppCompatActivity {
                 obtenerToken();
             }
             chats chat = new chats(idChat, nombre, direccion, telefono, email, dui, urlCompletaFoto, miToken);
-            if( key!= null ){
-                databaseReference.child(key).setValue(chat).addOnSuccessListener(success->{
-                    mostrarMsg("Registro guardado con exito.");
-                    abrirVentana();
-                }).addOnFailureListener(failure->{
-                    mostrarMsg("Error al registrar datos: "+failure.getMessage());
-                });
+            String[] datosChat = {idChat, nombre, direccion, telefono, email, dui, urlCompletaFoto, miToken};
+
+
+                db = new DB(this);
+                String respuesta = db.administrar_Chat(accion, datosChat);
+
+            if (respuesta == "ok"){
+                mostrarMsg("Registro guardado con exito localmente.");
+            }else {
+                mostrarMsg("Error al guardar localmente: " + respuesta);
+            }
+
+                if (accion.equals("modificar")) {
+                    di = new detectarInternet(this);
+                    if(di.hayConexionInternet()) {
+                        try {
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("idChat", idChat);
+                            updates.put("nombre", nombre);
+                            updates.put("direccion", direccion);
+                            updates.put("telefono", telefono);
+                            updates.put("email", email);
+                            updates.put("dui", dui);
+                            updates.put("foto", urlCompletaFoto);
+                            updates.put("token", miToken);
+                                databaseReference.child(miToken).updateChildren(updates).addOnSuccessListener(success -> {
+                                    mostrarMsg("Registro actualizado con exito.");
+                                }).addOnFailureListener(failure -> {
+                                    mostrarMsg("Error al actualizar datos: " + failure.getMessage());
+                                });
+
+                        } catch (Exception e) {
+                            mostrarMsg("ERROR al actualizar en Firebase: " + e.getMessage());
+                        }
+                    }
             } else {
+                    try {
+                        if( key!= null ) {
+                            databaseReference.child(key).setValue(chat).addOnSuccessListener(success->{
+                                mostrarMsg("Registro guardado con exito.");
+                                abrirVentana();
+                            }).addOnFailureListener(failure->{
+                                mostrarMsg("Error al registrar datos: "+failure.getMessage());
+                            });
+
+                        }
+                    } catch (Exception e) {
+                        mostrarMsg("Error al guardar en fireBase: " + e.getMessage());
+                    }
                 mostrarMsg("Error al guardar en firebase.");
             }
         }catch (Exception e){

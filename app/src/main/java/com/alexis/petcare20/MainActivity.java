@@ -944,15 +944,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 try {
                     di = new detectarInternet(this);
                     if(di.hayConexionInternet()){//online
-                        JSONObject datosChats = new JSONObject();
-                        String _id = jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("_id");
-                        String _rev = jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("_rev");
-                        String url = utilidades.url_mto + "/" + _id + "?rev=" + _rev;
-                        enviarDatosServidor objEnviarDatosServidor = new enviarDatosServidor(this);
-                        String respuesta = objEnviarDatosServidor.execute(datosChats.toString(), "DELETE", url).get();
-                        JSONObject respuestaJSON = new JSONObject(respuesta);
-                        if(!respuestaJSON.getBoolean("ok")) {
-                            mostrarMsg("Error al intentar eliminar: " + respuesta);
+                        try {
+                            String keyChatEliminar = jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("from");
+
+                            String[]datosChat = new String[]{jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("idChat")};
+                            String respuesta = db.administrar_Chat("eliminar", datosChat);
+                            if (respuesta.equals("ok")) {
+                                mostrarMsg("Registro eliminado con exito localmente");
+                            } else {
+                                mostrarMsg("Error al eliminar localmente: " + respuesta);
+                            }
+                            if (!keyChatEliminar.isEmpty()) {
+                                databaseReference = FirebaseDatabase.getInstance().getReference("Persona_chats");
+                                databaseReference.child(keyChatEliminar).removeValue().addOnSuccessListener(success -> {
+                                    mostrarMsg("Registro eliminado con exito.");
+                                }).addOnFailureListener(failure -> {
+                                    mostrarMsg("Error al eliminar datos: " + failure.getMessage());
+                                });
+                            } else {
+                                mostrarMsg("Error al guardar modificaciones en firebase.");
+                            }
+                        } catch (Exception e) {
+                            mostrarMsg("Error al eliminar mascota fireBase: " + e.getMessage());
                         }
                     }
                     String respuesta = db.administrar_Chat("eliminar", new String[]{jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("idChat")});
