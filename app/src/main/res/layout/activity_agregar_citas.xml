@@ -55,6 +55,14 @@
             android:layout_marginTop="200dp"
             android:text="Nombre: "
             android:textSize="21sp" />
+<!--        <Spinner
+            android:id="@+id/spnNombresCitaMascota"
+            android:layout_width="254dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="200dp"
+            android:layout_marginStart="130dp"
+            />-->
         <EditText
             android:id="@+id/txtNombreCitaMascota"
             android:layout_width="254dp"

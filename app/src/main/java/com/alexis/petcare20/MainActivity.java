@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //usuario = getIntent().getStringExtra("usuarioCuenta");
         parametros.putString("accion", "nuevo");
         db = new DB(this);
-        //db.deleteOldDatabases(this);
+        db.deleteOldDatabases(this);
 
         bottomNav.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.mascotasMenu) {
@@ -455,8 +455,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         jsonObject.put("fecha", cCitas.getString(2));
                         jsonObject.put("clinica", cCitas.getString(3));
                         jsonObject.put("nota", cCitas.getString(4));
-                        jsonObject.put("cuentaID", cCitas.getString(5));
-                        jsonObject.put("llave", cCitas.getString(6));
+                        jsonObject.put("foto", cCitas.getString(5));
+                        jsonObject.put("cuentaID", cCitas.getString(6));
+                        jsonObject.put("llave", cCitas.getString(7));
                         jsonArray.put(jsonObject);
 
                         //mostrarMsg(cCitas.getString(4) + "buyftyf");
@@ -489,6 +490,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 jsonObject.getString("fecha"),
                                 jsonObject.getString("clinica"),
                                 jsonObject.getString("nota"),
+                                jsonObject.getString("foto"),
                                 jsonObject.getString("cuentaID"),
                                 jsonObject.getString("llave")
 
