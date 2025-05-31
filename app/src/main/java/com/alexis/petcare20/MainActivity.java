@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
         fabAgregarCitas.setVisibility(View.GONE);
         fabAgregarChat.setVisibility(View.GONE);
-    }
+    }//mostrarDatos
     private void ventanaChat(){
         layout_mascotas.setVisibility(View.GONE);
         layout_chat.setVisibility(View.VISIBLE);
