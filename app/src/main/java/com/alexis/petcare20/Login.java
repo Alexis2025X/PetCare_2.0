@@ -101,12 +101,14 @@ public class Login extends AppCompatActivity {
         String usuario;
         String contrasena;
         String correo;
+        String llave;
 
         id = cInicio.getString(0);
         nombre = cInicio.getString(1);
         usuario = cInicio.getString(2);
         contrasena = cInicio.getString(3);
         correo = cInicio.getString(4);
+        llave = cInicio.getString(5);
 
         Intent intent = new Intent(this, MainActivity.class);
         datosCuentaEnUso.setIdCuenta(id);
@@ -114,6 +116,7 @@ public class Login extends AppCompatActivity {
         datosCuentaEnUso.setUsuarioCuenta(usuario);
         datosCuentaEnUso.setContraseñaCuenta(contrasena);
         datosCuentaEnUso.setCorreoCuenta(correo);
+        datosCuentaEnUso.setLlaveCuenta(llave);
 
 
         startActivity(intent);
@@ -122,7 +125,6 @@ public class Login extends AppCompatActivity {
     private void inicioDeSesion(String user, String password) {
         try {
             cInicio = db.iniciarSesion(user, password);
-
             if (cInicio.moveToFirst()) {
                 abrirPantallaPrincipal();
             } else {

@@ -1,5 +1,6 @@
 package com.alexis.petcare20;
 
+
 public class chats {
     String idChat;
     String nombre;
@@ -8,11 +9,11 @@ public class chats {
     String email;
     String dui;
     String foto;
-    String urlCompletaFotoFirestore;
-    String miToken;
+    //String urlCompletaFotoFirestore;
+    String token;
 
     public chats() {}
-    public chats(String idChat, String nombre, String direccion, String telefono, String email, String dui, String foto, String urlCompletaFotoFirestore, String miToken) {
+    public chats(String idChat, String nombre, String direccion, String telefono, String email, String dui, String foto, String token) {
         this.idChat = idChat;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -20,21 +21,21 @@ public class chats {
         this.email = email;
         this.dui = dui;
         this.foto = foto;
-        this.miToken = miToken;
-        this.urlCompletaFotoFirestore = urlCompletaFotoFirestore;
+        this.token = token;
+        //this.urlCompletaFotoFirestore = urlCompletaFotoFirestore;
     }
-    public String getUrlCompletaFotoFirestore() {
+/*    public String getUrlCompletaFotoFirestore() {
         return urlCompletaFotoFirestore;
     }
     public void setUrlCompletaFotoFirestore(String urlCompletaFotoFirestore) {
         this.urlCompletaFotoFirestore = urlCompletaFotoFirestore;
-    }
-    public String getMiToken() {
-        return miToken;
+    }*/
+    public String getToken() {
+        return token;
     }
 
-    public void setMiToken(String miToken) {
-        this.miToken = miToken;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getIdChat() {
