@@ -98,6 +98,10 @@ public class agregar_mascotas extends AppCompatActivity {
 
                 miKey = datos.getString("llave");
                 idMascota = datos.getString("idMascota");
+                urlCompletaFoto = datos.getString("foto");
+                if (!urlCompletaFoto.isEmpty()) {
+                    img.setImageURI(Uri.parse(urlCompletaFoto));
+                }
 
             }
         } catch (Exception e) {

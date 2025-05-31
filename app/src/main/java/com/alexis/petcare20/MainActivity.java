@@ -938,7 +938,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     private void eliminarChat(){
         try{
-            String nombre = jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("nombre");
+            String nombre = jsonArrayChats.getJSONObject(posicion).getString("nombre");
             AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
             confirmacion.setTitle("Esta seguro de eliminar a: ");
             confirmacion.setMessage(nombre);
@@ -947,9 +947,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     di = new detectarInternet(this);
                     if(di.hayConexionInternet()){//online
                         try {
-                            String keyChatEliminar = jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("from");
+                            String keyChatEliminar = jsonArrayChats.getJSONObject(posicion).getString("from");
 
-                            String[]datosChat = new String[]{jsonArrayChats.getJSONObject(posicion).getJSONObject("value").getString("idChat")};
+                            String[]datosChat = new String[]{jsonArrayChats.getJSONObject(posicion).getString("idChat")};
                             String respuesta = db.administrar_Chat("eliminar", datosChat);
                             if (respuesta.equals("ok")) {
                                 mostrarMsg("Registro eliminado con exito localmente");
@@ -1210,7 +1210,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 updates.put("constructorKeyCuenta", llaveCuenta);
 
                                 if (llaveCuenta != null || llaveCuenta == "") {
-                                    databaseReference = FirebaseDatabase.getInstance().getReference("citas");
+                                    databaseReference = FirebaseDatabase.getInstance().getReference("cuentas");
                                     databaseReference.child(llaveCuenta).updateChildren(updates).addOnSuccessListener(success -> {
                                         mostrarMsg("Registro actualizado con exito.");
                                     }).addOnFailureListener(failure -> {
