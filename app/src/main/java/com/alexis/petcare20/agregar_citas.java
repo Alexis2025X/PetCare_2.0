@@ -85,7 +85,7 @@ public class agregar_citas extends AppCompatActivity {
                 idCitas = datos.getString("idCitas");
                 miKey = datos.getString("llave");
                 TextView tempVal = findViewById(R.id.txtNombreCitaMascota);
-                mostrarMsg(datos.getString("nombre") + "sfsdf");
+                mostrarMsg(datos.getString("nombre"));
 
                 tempVal.setText(datos.getString("nombre"));
 
@@ -98,6 +98,7 @@ public class agregar_citas extends AppCompatActivity {
 
                 tempVal = findViewById(R.id.txtNota);
                 tempVal.setText(datos.getString("nota"));
+
             }
 
         }catch (Exception e){
