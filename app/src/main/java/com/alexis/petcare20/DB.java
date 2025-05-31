@@ -11,8 +11,8 @@ import java.io.File;
 
 public class DB extends SQLiteOpenHelper {
 
-/*    public void deleteOldDatabases(Context context) {
-        String[] oldDatabases = {"Pet", "PetCare", "ue3.db"};
+    public void deleteOldDatabases(Context context) {
+        String[] oldDatabases = { "PetCare","petCare", "com.google.android.datatransport.events", "ue3.db"};
 
         for (String dbName : oldDatabases) {
             context.deleteDatabase(dbName);
@@ -21,9 +21,9 @@ public class DB extends SQLiteOpenHelper {
                 dbFile.delete();
             }
         }
-    }*/
+    }
     //Nombre de la base de datos y version agp
-    private static final String DATABASE_NAME = "petCare";
+    private static final String DATABASE_NAME = "PetCare_1";
     private static final int DATABASE_VERSION = 1;
     //Cración de la base de datos
     //tabla cuentas
@@ -31,7 +31,7 @@ public class DB extends SQLiteOpenHelper {
     //tabla mascotas
     private static final String SQLdbMascotas = "CREATE TABLE Mascotas (idMascota INTEGER PRIMARY KEY AUTOINCREMENT, dueño TEXT, nombre TEXT, edad TEXT,raza TEXT,problemas_medicos TEXT,foto TEXT, usuario TEXT,llave TEXT)";
     //tabla de Citas
-    private static final String SQLdbCitas = "CREATE TABLE Citas (idCitas INTEGER PRIMARY KEY AUTOINCREMENT, nombreMascota  TEXT, fecha DATETIME, clinica TEXT, nota TEXT, usuario TEXT, llave TEXT)";
+    private static final String SQLdbCitas = "CREATE TABLE Citas (idCitas INTEGER PRIMARY KEY AUTOINCREMENT, nombreMascota  TEXT, fecha DATETIME, clinica TEXT, nota TEXT, foto TEXT, usuario TEXT, llave TEXT)";
     //tabla de Chats esta ira a Firebase
     private static final String SQLdbChats = "CREATE TABLE Chat (idChat TEXT, nombre TEXT, direccion TEXT, telefono TEXT, email TEXT, dui TEXT, urlFoto TEXT, miToken TEXT)";
 
@@ -118,10 +118,10 @@ public class DB extends SQLiteOpenHelper {
             String mensaje = "ok", sql = "";
             switch (accion) {
                 case "nuevo":
-                    sql = "INSERT INTO Citas (nombreMascota, fecha, clinica, nota, usuario,llave) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4]+ "', '" + datos[5]+ "', '" + datos[6]+ "')";
+                    sql = "INSERT INTO Citas (nombreMascota, fecha, clinica, nota, foto, usuario,llave) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4]+ "', '" + datos[5]+ "', '" + datos[6]+ "', '" + datos[7]+ "')";
                     break;
                 case "modificar":
-                    sql = "UPDATE Citas SET nombreMascota = '" + datos[1] + "', fecha = '" + datos[2] + "', clinica = '" + datos[3] + "', nota = '" + datos[4] + "', usuario = '" + datos[5] + "', llave = '" + datos[6] + "' WHERE idCitas = " + datos[0];
+                    sql = "UPDATE Citas SET nombreMascota = '" + datos[1] + "', fecha = '" + datos[2] + "', clinica = '" + datos[3] + "', nota = '" + datos[4] + "', foto = '" + datos[5] + "', usuario = '" + datos[6] + "', llave = '" + datos[7] + "' WHERE idCitas = " + datos[0];
                     break;
                 case "eliminar":
                     sql = "DELETE FROM Citas WHERE idCitas = " + datos[0];
@@ -182,7 +182,6 @@ public class DB extends SQLiteOpenHelper {
         return db.rawQuery(sql, null);
     }
 
-
     public Cursor lista_Citas(String idCuenta){
         //bd es el ejecutador de consultas
         SQLiteDatabase db = getReadableDatabase();
@@ -193,6 +192,10 @@ public class DB extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT * FROM Cuentas", null);
     }
+/*    public Cursor lista_nombre_mascota_citas(String idCuenta){
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery("SELECT idMascota, nombre, foto FROM Mascotas WHERE usuario = '" + idCuenta + "'", null);
+    }*/
     public Cursor lista_mascotas(String idCuenta){
         //bd es el ejecutador de consultas
         SQLiteDatabase db = getReadableDatabase();
