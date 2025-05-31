@@ -46,6 +46,7 @@ public class agregar_mascotas extends AppCompatActivity {
     String miToken = "";
 
     String miKey = "";
+    detectarInternet di;
     DatabaseReference databaseReference;
 
     TextView temval;
@@ -132,30 +133,33 @@ public class agregar_mascotas extends AppCompatActivity {
                String respuesta =  db.administrar_Mascota("modificar", datosMascota);
                mostrarMsg("Estado del registro: " + respuesta );
 
-               try {  //comienzo de modificacion en firebase
-                   Map<String, Object> updates = new HashMap<>();
-                   updates.put("idMascota",idMascota );
-                   updates.put("dueño", dueño);
-                   updates.put("nombre", nombre);
-                   updates.put("raza", raza);
-                   updates.put("problemas_medicos", problemasMedicos);
-                   updates.put("foto", urlCompletaFoto);
-                   updates.put("usuario", cuentaID);
-                   updates.put("llave", miKey);
-                   databaseReference = FirebaseDatabase.getInstance().getReference("mascotas");
-                   if( miKey!= null || miKey == ""){
-                       databaseReference.child(miKey).updateChildren(updates).addOnSuccessListener(success->{
-                           mostrarMsg("Registro actualizado con exito.");
-                       }).addOnFailureListener(failure->{
-                           mostrarMsg("Error al registrar datos: "+failure.getMessage());
-                       });
-                   } else {
-                       mostrarMsg("Error al guardar modificaciones en firebase.");
+
+               di = new detectarInternet(this);
+               if(di.hayConexionInternet()) {
+                   try {  //comienzo de modificacion en firebase
+                       Map<String, Object> updates = new HashMap<>();
+                       updates.put("idMascota", idMascota);
+                       updates.put("dueño", dueño);
+                       updates.put("nombre", nombre);
+                       updates.put("raza", raza);
+                       updates.put("problemas_medicos", problemasMedicos);
+                       updates.put("foto", urlCompletaFoto);
+                       updates.put("usuario", cuentaID);
+                       updates.put("llave", miKey);
+                       databaseReference = FirebaseDatabase.getInstance().getReference("mascotas");
+                       if (miKey != null || miKey == "") {
+                           databaseReference.child(miKey).updateChildren(updates).addOnSuccessListener(success -> {
+                               mostrarMsg("Registro actualizado con exito.");
+                           }).addOnFailureListener(failure -> {
+                               mostrarMsg("Error al registrar datos: " + failure.getMessage());
+                           });
+                       } else {
+                           mostrarMsg("Error al guardar modificaciones en firebase.");
+                       }
+
+                   } catch (Exception e) {
+                       mostrarMsg("Error al modificar: " + e.getMessage());
                    }
-
-
-               }catch (Exception e){
-                   mostrarMsg("Error al modificar: " + e.getMessage());
                }
                comprovacion(respuesta);
            }catch (Exception e){
@@ -172,22 +176,25 @@ public class agregar_mascotas extends AppCompatActivity {
             if( miToken.equals("") || miToken==null ){
                 obtenerToken();
             }
-            try{
-                databaseReference = FirebaseDatabase.getInstance().getReference("mascotas");
-                String key = databaseReference.push().getKey();
+            di = new detectarInternet(this);
+            if(di.hayConexionInternet()) {
+                try {
+                    databaseReference = FirebaseDatabase.getInstance().getReference("mascotas");
+                    String key = databaseReference.push().getKey();
 
-                mascotas mascotas = new mascotas(idMascota, dueño, nombre, edad, raza, problemasMedicos, urlCompletaFoto, cuentaID,key);
-                if( key!= null ){
-                    databaseReference.child(key).setValue(mascotas).addOnSuccessListener(success->{
-                        mostrarMsg("Registro guardado con exito.");
-                    }).addOnFailureListener(failure->{
-                        mostrarMsg("Error al registrar datos: "+failure.getMessage());
-                    });
-                } else {
-                    mostrarMsg("Error al guardar en firebase.");
+                    mascotas mascotas = new mascotas(idMascota, dueño, nombre, edad, raza, problemasMedicos, urlCompletaFoto, cuentaID, key);
+                    if (key != null) {
+                        databaseReference.child(key).setValue(mascotas).addOnSuccessListener(success -> {
+                            mostrarMsg("Registro guardado con exito.");
+                        }).addOnFailureListener(failure -> {
+                            mostrarMsg("Error al registrar datos: " + failure.getMessage());
+                        });
+                    } else {
+                        mostrarMsg("Error al guardar en firebase.");
+                    }
+                } catch (Exception e) {
+                    mostrarMsg("Error: " + e.getMessage());
                 }
-            } catch (Exception e) {
-                mostrarMsg("Error: " + e.getMessage());
             }
             comprovacion(respuesta);
 
