@@ -51,6 +51,7 @@ public class agregar_citas extends AppCompatActivity {
     String cuentaID, user;
     String miToken = "";
 
+    detectarInternet di;
     String miKey = "";
     DatabaseReference databaseReference;
 
@@ -154,31 +155,32 @@ public class agregar_citas extends AppCompatActivity {
             String mensaje = db.administrar_Citas(accion, datos);
             mostrarMsg("Estado de la cita: " + mensaje);
             //comienzo de actualizacion en fireBase
+                di = new detectarInternet(this);
+                if(di.hayConexionInternet()) {
+                    try {
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("idCitas", idCitas);
+                        updates.put("nombreMascota", nombreMascota);
+                        updates.put("fecha", fecha);
+                        updates.put("clinica", clinica);
+                        updates.put("nota", nota);
+                        updates.put("usuario", cuentaID);
+                        updates.put("llave", miKey);
 
-            try {
-                Map<String, Object> updates = new HashMap<>();
-                updates.put("idCitas",idCitas );
-                updates.put("nombreMascota", nombreMascota);
-                updates.put("fecha", fecha);
-                updates.put("clinica", clinica);
-                updates.put("nota", nota);
-                updates.put("usuario", cuentaID);
-                updates.put("llave", miKey);
-
-                if( miKey!= null || miKey == ""){
-                    databaseReference = FirebaseDatabase.getInstance().getReference("citas");
-                    databaseReference.child(miKey).updateChildren(updates).addOnSuccessListener(success->{
-                        mostrarMsg("Registro actualizado con exito.");
-                    }).addOnFailureListener(failure->{
-                        mostrarMsg("Error al actualizar datos: "+failure.getMessage());
-                    });
-                } else {
-                    mostrarMsg("Error al guardar en firebase.");
+                        if (miKey != null || miKey == "") {
+                            databaseReference = FirebaseDatabase.getInstance().getReference("citas");
+                            databaseReference.child(miKey).updateChildren(updates).addOnSuccessListener(success -> {
+                                mostrarMsg("Registro actualizado con exito.");
+                            }).addOnFailureListener(failure -> {
+                                mostrarMsg("Error al actualizar datos: " + failure.getMessage());
+                            });
+                        } else {
+                            mostrarMsg("Error al guardar en firebase.");
+                        }
+                    } catch (Exception e) {
+                        mostrarMsg("ERROR al actualizar en Firebase: " + e.getMessage());
+                    }
                 }
-            } catch (Exception e) {
-                mostrarMsg("ERROR al actualizar en Firebase: " + e.getMessage());
-            }
-
             } catch (Exception e) {
                 mostrarMsg("Error al actualizar: " + e.getMessage());
             }
@@ -198,6 +200,9 @@ public class agregar_citas extends AppCompatActivity {
                 String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, cuentaID,key};
                 String mensaje = db.administrar_Citas(accion, datos);
 
+                di = new detectarInternet(this);
+                if(di.hayConexionInternet()) {
+
                 citas cita = new citas(idCitas, nombreMascota, fecha, clinica, nota, cuentaID,key);
                 if( key!= null ){
                     databaseReference.child(key).setValue(cita).addOnSuccessListener(success->{
@@ -207,6 +212,7 @@ public class agregar_citas extends AppCompatActivity {
                     });
                 } else {
                     mostrarMsg("Error al guardar en firebase.");
+                }
                 }
                 mostrarMsg("Estado de la cita: " + mensaje);
             } catch (Exception e) {

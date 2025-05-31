@@ -28,6 +28,7 @@ public class crear_cuenta extends AppCompatActivity {
     Cursor cComprovacionUser;
     String miToken = "";
     DatabaseReference databaseReference;
+    detectarInternet di;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,25 +78,26 @@ public class crear_cuenta extends AppCompatActivity {
             String[] datos = {"", nombre, usuario, contraseña, correo,key};
             String respuesta = db.administrar_cuentas("nuevo", datos);
             mostrarMsg("Estado de la cuenta: " + respuesta);
+            di = new detectarInternet(this);
+            if(di.hayConexionInternet()) {
+                try {
 
-            try {
+                    datosCuentaEnUso cuenta = new datosCuentaEnUso("", nombre, usuario, contraseña, correo, key);
+                    mostrarMsg(cuenta.constructorNombreCuenta);
+                    if (key != null) {
+                        databaseReference.child(key).setValue(cuenta).addOnSuccessListener(success -> {
+                            mostrarMsg("Registro guardado con exito.");
+                        }).addOnFailureListener(failure -> {
+                            mostrarMsg("Error al registrar datos: " + failure.getMessage());
+                        });
+                    } else {
+                        mostrarMsg("Error al guardar en firebase.");
+                    }
 
-                datosCuentaEnUso cuenta = new datosCuentaEnUso("", nombre, usuario, contraseña, correo,key);
-               mostrarMsg(cuenta.constructorNombreCuenta);
-                if( key!= null ){
-                    databaseReference.child(key).setValue(cuenta).addOnSuccessListener(success->{
-                        mostrarMsg("Registro guardado con exito.");
-                    }).addOnFailureListener(failure->{
-                        mostrarMsg("Error al registrar datos: "+failure.getMessage());
-                    });
-                } else {
-                    mostrarMsg("Error al guardar en firebase.");
+                } catch (Exception e) {
+                    mostrarMsg("Remote Error: " + e.getMessage());
                 }
-
-            } catch (Exception e) {
-                mostrarMsg("Remote Error: " + e.getMessage());
             }
-
         }catch (Exception e) {
             mostrarMsg("Local Error: " + e.getMessage());
         }

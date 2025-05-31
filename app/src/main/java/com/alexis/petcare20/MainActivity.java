@@ -404,6 +404,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 confirmacion.setPositiveButton("Si", (dialog, which) -> {
                     try {
                         String respuesta = db.administrar_Citas("eliminar", new String[]{jsonArray.getJSONObject(posicion).getString("idCitas")});
+                        di = new detectarInternet(this);
+                        if(di.hayConexionInternet()) {
+                            try {
+                                String keyCitaEliminar = jsonArrayMascotas.getJSONObject(posicion).getString("llave");
+                                if (!keyCitaEliminar.isEmpty()) {
+                                    databaseReference = FirebaseDatabase.getInstance().getReference("citas");
+                                    databaseReference.child(keyCitaEliminar).removeValue().addOnSuccessListener(success -> {
+                                        mostrarMsg("Registro eliminado con exito.");
+                                    }).addOnFailureListener(failure -> {
+                                        mostrarMsg("Error al eliminar datos: " + failure.getMessage());
+                                    });
+                                } else {
+                                    mostrarMsg("Error al guardar modificaciones en firebase.");
+                                }
+                            } catch (Exception e) {
+                                mostrarMsg("Error al eliminar mascota fireBase: " + e.getMessage());
+                            }
+                        }
                         if (respuesta.equals("ok")) {
                             obtenerDatosCitas(cuentaID);
                             buscarCitas();
@@ -649,6 +667,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             confirmacion.setPositiveButton("Si", (dialog, which) -> {
                 try {
                     String respuesta = db.administrar_Mascota("eliminar", new String[]{jsonArrayMascotas.getJSONObject(posicion).getString("idMascota")});
+                    di = new detectarInternet(this);
+                    if(di.hayConexionInternet()) {
+                        try {
+                            String keyMascotaEliminar = jsonArrayMascotas.getJSONObject(posicion).getString("llave");
+                            if (!keyMascotaEliminar.isEmpty()) {
+                                databaseReference = FirebaseDatabase.getInstance().getReference("mascotas");
+                                databaseReference.child(keyMascotaEliminar).removeValue().addOnSuccessListener(success -> {
+                                    mostrarMsg("Registro eliminado con exito.");
+                                }).addOnFailureListener(failure -> {
+                                    mostrarMsg("Error al eliminar datos: " + failure.getMessage());
+                                });
+                            } else {
+                                mostrarMsg("Error al guardar modificaciones en firebase.");
+                            }
+                        } catch (Exception e) {
+                            mostrarMsg("Error al eliminar mascota fireBase: " + e.getMessage());
+                        }
+                    }
+
                     if (respuesta.equals("ok")) {
                         obtenerDatosMascotas(cuentaID);
                         buscarMascotas();
@@ -1145,36 +1182,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         db = new DB(this);
                         String respuesta = db.administrar_cuentas("modificar", datos);
 
-                        try {
+                        di = new detectarInternet(this);
+                        if(di.hayConexionInternet()) {
+                            try {
 
-                            Map<String, Object> updates = new HashMap<>();
-                            updates.put("constructorIdCuenta",idCuentaActual );
-                            updates.put("constructorNombreCuenta", nombre);
-                            updates.put("constructorUsuarioCuenta", usuario);
-                            updates.put("constructorContraseñaCuenta", contraseña);
-                            updates.put("constructorCorreoCuenta", email);
-                            updates.put("constructorKeyCuenta", llaveCuenta);
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("constructorIdCuenta", idCuentaActual);
+                                updates.put("constructorNombreCuenta", nombre);
+                                updates.put("constructorUsuarioCuenta", usuario);
+                                updates.put("constructorContraseñaCuenta", contraseña);
+                                updates.put("constructorCorreoCuenta", email);
+                                updates.put("constructorKeyCuenta", llaveCuenta);
 
-
-
-                            if( llaveCuenta!= null || llaveCuenta == ""){
-                                databaseReference = FirebaseDatabase.getInstance().getReference("citas");
-                                databaseReference.child(llaveCuenta).updateChildren(updates).addOnSuccessListener(success->{
-                                    mostrarMsg("Registro actualizado con exito.");
-                                }).addOnFailureListener(failure->{
-                                    mostrarMsg("Error al actualizar datos: "+failure.getMessage());
-                                });
-                            } else {
-                                mostrarMsg("Error al guardar en firebase.");
+                                if (llaveCuenta != null || llaveCuenta == "") {
+                                    databaseReference = FirebaseDatabase.getInstance().getReference("citas");
+                                    databaseReference.child(llaveCuenta).updateChildren(updates).addOnSuccessListener(success -> {
+                                        mostrarMsg("Registro actualizado con exito.");
+                                    }).addOnFailureListener(failure -> {
+                                        mostrarMsg("Error al actualizar datos: " + failure.getMessage());
+                                    });
+                                } else {
+                                    mostrarMsg("Error al guardar en firebase.");
+                                }
+                                //String[] datos = {idCuentaActual,nombre, usuario, contraseña, email};
+                            } catch (Exception e) {
+                                mostrarMsg("Error al actualizar la cuenta en fireBase: " + e.getMessage());
                             }
-
-                    //String[] datos = {idCuentaActual,nombre, usuario, contraseña, email};
-
-
-                        } catch (Exception e) {
-                            mostrarMsg("Error al actualizar la cuenta en fireBase: " + e.getMessage());
                         }
-
 
                         if (respuesta == "ok"){
                             mostrarMsg("Cuenta actualizada con éxito.");
@@ -1224,9 +1258,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     confirmacion.setMessage("Eliminar cuenta?");
                     confirmacion.setPositiveButton("Si", (dialog, which) -> {
                         try {
-                            di = new detectarInternet(this);
-
                             String respuesta = db.administrar_cuentas("eliminar", new String[]{idCuentaActual});
+
+                            di = new detectarInternet(this);
+                            if(di.hayConexionInternet()) {
+
+
+                                try {
+                                    if (!llaveCuenta.isEmpty()) {
+                                        databaseReference = FirebaseDatabase.getInstance().getReference("cuentas");
+                                        databaseReference.child(llaveCuenta).removeValue().addOnSuccessListener(success -> {
+                                            mostrarMsg("Registro eliminado con exito.");
+                                        }).addOnFailureListener(failure -> {
+                                            mostrarMsg("Error al eliminar datos: " + failure.getMessage());
+                                        });
+                                    } else {
+                                        mostrarMsg("Error al guardar modificaciones en firebase.");
+                                    }
+                                } catch (Exception e) {
+                                    mostrarMsg("Error al eliminar mascota fireBase: " + e.getMessage());
+                                }
+                            }
                             if(respuesta.equals("ok")) {
                                 Intent intent = new Intent(this, Login.class);
                                 startActivity(intent);
