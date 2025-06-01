@@ -107,7 +107,7 @@ public class agregar_citas extends AppCompatActivity {
                 idCitas = datos.getString("idCitas");
                 miKey = datos.getString("llave");
                 TextView tempVal = findViewById(R.id.txtNombreCitaMascota);
-                mostrarMsg(datos.getString("nombre"));
+                mostrarMsg(datos.getString("nombre") + "sfsdf");
 
                 tempVal.setText(datos.getString("nombre"));
 
@@ -121,9 +121,8 @@ public class agregar_citas extends AppCompatActivity {
                 tempVal = findViewById(R.id.txtNota);
                 tempVal.setText(datos.getString("nota"));
 
-               // urlCompletaFoto = datos.getString("urlFoto");
-               // img.setImageURI(Uri.parse(urlCompletaFoto));
-
+                urlCompletaFoto = datos.getString("urlFoto");
+                img.setImageURI(Uri.parse(urlCompletaFoto));
             }
 
         }catch (Exception e){
