@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         fabAgregarMascotas.setOnClickListener(view->abrirAgregarMascotas());
         fabAgregarCitas.setVisibility(View.GONE);
         fabAgregarChat.setVisibility(View.GONE);
-    }
+    }//mostrarDatos
     private void ventanaChat(){
         layout_mascotas.setVisibility(View.GONE);
         layout_chat.setVisibility(View.VISIBLE);
@@ -865,6 +865,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     private void eliminarChat(){
         try{
+
         String nombre = jsonArrayChats.getJSONObject(posicion).getString("nombre");
         AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
         confirmacion.setTitle("Esta seguro de eliminar a: ");
@@ -909,6 +910,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     //
 /*        try{
+=======
+
             String nombre = jsonArrayChats.getJSONObject(posicion).getString("nombre");
             AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
             confirmacion.setTitle("Esta seguro de eliminar a: ");
@@ -917,15 +920,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 try {
                     di = new detectarInternet(this);
                     if(di.hayConexionInternet()){//online
-                        JSONObject datosChats = new JSONObject();
-                        String _id = jsonArrayChats.getJSONObject(posicion).getString("_id");
-                        String _rev = jsonArrayChats.getJSONObject(posicion).getString("_rev");
-                        String url = utilidades.url_mto + "/" + _id + "?rev=" + _rev;
-                        enviarDatosServidor objEnviarDatosServidor = new enviarDatosServidor(this);
-                        String respuesta = objEnviarDatosServidor.execute(datosChats.toString(), "DELETE", url).get();
-                        JSONObject respuestaJSON = new JSONObject(respuesta);
-                        if(!respuestaJSON.getBoolean("ok")) {
-                            mostrarMsg("Error al intentar eliminar: " + respuesta);
+
+                        try {
+                            String keyChatEliminar = jsonArrayChats.getJSONObject(posicion).getString("from");
+
+                            String[]datosChat = new String[]{jsonArrayChats.getJSONObject(posicion).getString("idChat")};
+                            String respuesta = db.administrar_Chat("eliminar", datosChat);
+                            if (respuesta.equals("ok")) {
+                                mostrarMsg("Registro eliminado con exito localmente");
+                            } else {
+                                mostrarMsg("Error al eliminar localmente: " + respuesta);
+                            }
+                            if (!keyChatEliminar.isEmpty()) {
+                                databaseReference = FirebaseDatabase.getInstance().getReference("Persona_chats");
+                                databaseReference.child(keyChatEliminar).removeValue().addOnSuccessListener(success -> {
+                                    mostrarMsg("Registro eliminado con exito.");
+                                }).addOnFailureListener(failure -> {
+                                    mostrarMsg("Error al eliminar datos: " + failure.getMessage());
+                                });
+                            } else {
+                                mostrarMsg("Error al guardar modificaciones en firebase.");
+                            }
+                        } catch (Exception e) {
+                            mostrarMsg("Error al eliminar mascota fireBase: " + e.getMessage());
+
                         }
                     }
                     String respuesta = db.administrar_Chat("eliminar", new String[]{jsonArrayChats.getJSONObject(posicion).getString("idChat")});
@@ -1151,27 +1169,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         db = new DB(this);
                         String respuesta = db.administrar_cuentas("modificar", datos);
 
-                        try {
+                        di = new detectarInternet(this);
+                        if(di.hayConexionInternet()) {
+                            try {
 
-                            Map<String, Object> updates = new HashMap<>();
-                            updates.put("constructorIdCuenta",idCuentaActual );
-                            updates.put("constructorNombreCuenta", nombre);
-                            updates.put("constructorUsuarioCuenta", usuario);
-                            updates.put("constructorContraseñaCuenta", contraseña);
-                            updates.put("constructorCorreoCuenta", email);
-                            updates.put("constructorKeyCuenta", llaveCuenta);
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("constructorIdCuenta", idCuentaActual);
+                                updates.put("constructorNombreCuenta", nombre);
+                                updates.put("constructorUsuarioCuenta", usuario);
+                                updates.put("constructorContraseñaCuenta", contraseña);
+                                updates.put("constructorCorreoCuenta", email);
+                                updates.put("constructorKeyCuenta", llaveCuenta);
 
+                                if (llaveCuenta != null || llaveCuenta == "") {
+                                    databaseReference = FirebaseDatabase.getInstance().getReference("cuentas");
+                                    databaseReference.child(llaveCuenta).updateChildren(updates).addOnSuccessListener(success -> {
+                                        mostrarMsg("Registro actualizado con exito.");
+                                    }).addOnFailureListener(failure -> {
+                                        mostrarMsg("Error al actualizar datos: " + failure.getMessage());
+                                    });
+                                } else {
+                                    mostrarMsg("Error al guardar en firebase.");
+                                }
+                                //String[] datos = {idCuentaActual,nombre, usuario, contraseña, email};
+                            } catch (Exception e) {
+                                mostrarMsg("Error al actualizar la cuenta en fireBase: " + e.getMessage());
 
-
-                            if( llaveCuenta!= null || llaveCuenta == ""){
-                                databaseReference = FirebaseDatabase.getInstance().getReference("citas");
-                                databaseReference.child(llaveCuenta).updateChildren(updates).addOnSuccessListener(success->{
-                                    mostrarMsg("Registro actualizado con exito.");
-                                }).addOnFailureListener(failure->{
-                                    mostrarMsg("Error al actualizar datos: "+failure.getMessage());
-                                });
-                            } else {
-                                mostrarMsg("Error al guardar en firebase.");
                             }
 
                     //String[] datos = {idCuentaActual,nombre, usuario, contraseña, email};

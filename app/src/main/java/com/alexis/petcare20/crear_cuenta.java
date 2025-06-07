@@ -83,7 +83,7 @@ public class crear_cuenta extends AppCompatActivity {
                 try {
 
                     datosCuentaEnUso cuenta = new datosCuentaEnUso("", nombre, usuario, contraseña, correo, key);
-                    mostrarMsg(cuenta.constructorNombreCuenta);
+
                     if (key != null) {
                         databaseReference.child(key).setValue(cuenta).addOnSuccessListener(success -> {
                             mostrarMsg("Registro guardado con exito.");
