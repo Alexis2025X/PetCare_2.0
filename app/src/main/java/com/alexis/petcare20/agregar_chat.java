@@ -26,7 +26,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -87,7 +86,7 @@ public class agregar_chat extends AppCompatActivity {
         intent.putExtras(parametros);
         startActivity(intent);
 
-    }
+    }//Error al mostrar datos
     private void mostrarMsg(String msg){
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
@@ -119,47 +118,42 @@ public class agregar_chat extends AppCompatActivity {
         }
     }
     private void mostrarDatos(){
+
         try {
             Bundle parametros = getIntent().getExtras();
             accion = parametros.getString("accion");
+
             if (accion.equals("modificar")) {
-                JSONObject datos = new JSONObject(parametros.getString("chats"));
-                id = datos.getString("_id");
-                rev = datos.getString("_rev");
+                JSONObject datos = new JSONObject(parametros.getString("Persona_chats"));
+
+                //id = datos.getString("_id");
+                //rev = datos.getString("_rev");
                 idChat = datos.getString("idChat");
 
                 tempVal = findViewById(R.id.txtNombreChatMascota);
                 tempVal.setText(datos.getString("nombre"));
-
                 tempVal = findViewById(R.id.txtDireccion);
                 tempVal.setText(datos.getString("direccion"));
-
                 tempVal = findViewById(R.id.txtTelefono);
                 tempVal.setText(datos.getString("telefono"));
-
                 tempVal = findViewById(R.id.txtEmail);
                 tempVal.setText(datos.getString("email"));
-
                 tempVal = findViewById(R.id.txtDui);
                 tempVal.setText(datos.getString("dui"));
-
                 urlCompletaFoto = datos.getString("urlFoto");
                 img.setImageURI(Uri.parse(urlCompletaFoto));
-            }else {
-                //idChat = ;
             }
         }catch (Exception e){
-            mostrarMsg("Error al mostrar datos: "+e.getMessage());
+
+            mostrarAlert("Error al mostrar datos: "+e.getMessage());
         }
     }
     private void guardarChat() {
         try {
             tempVal = findViewById(R.id.txtNombreChatMascota);
             String nombre = tempVal.getText().toString();
-
             tempVal = findViewById(R.id.txtDireccion);
             String direccion = tempVal.getText().toString();
-
             tempVal = findViewById(R.id.txtTelefono);
             String telefono = tempVal.getText().toString();
 
@@ -169,67 +163,94 @@ public class agregar_chat extends AppCompatActivity {
             tempVal = findViewById(R.id.txtDui);
             String dui = tempVal.getText().toString();
 
-            databaseReference = FirebaseDatabase.getInstance().getReference("Persona_chats");
-            String key = databaseReference.push().getKey();
-
-            if( miToken.equals("") || miToken==null ){
-                obtenerToken();
+            if (nombre.isEmpty() || direccion.isEmpty() || telefono.isEmpty( ) || email.isEmpty() || dui.isEmpty()) {
+                mostrarMsg("Error: Todos los campos son obligatorios.");
+                return;
             }
-            chats chat = new chats(idChat, nombre, direccion, telefono, email, dui, urlCompletaFoto, miToken);
-            String[] datosChat = {idChat, nombre, direccion, telefono, email, dui, urlCompletaFoto, miToken};
+            String[] datos = {idChat, nombre, direccion, telefono, email, dui,  urlCompletaFoto,miToken};
 
+            if (accion == "modificar") {
+                try {
+                    db = new DB(this);
+                    //String[] datos = {idChat, nombre, direccion, telefono, email, dui,  urlCompletaFoto, cuentaID,miToken};
+                    String mensaje = db.administrar_Citas(accion, datos);
+                    mostrarMsg("Estado de la cita: " + mensaje);
+                    //comienzo de actualizacion en fireBase
 
-                db = new DB(this);
-                String respuesta = db.administrar_Chat(accion, datosChat);
-
-            if (respuesta == "ok"){
-                mostrarMsg("Registro guardado con exito localmente.");
-            }else {
-                mostrarMsg("Error al guardar localmente: " + respuesta);
-            }
-
-                if (accion.equals("modificar")) {
-                    di = new detectarInternet(this);
-                    if(di.hayConexionInternet()) {
-                        try {
-                            Map<String, Object> updates = new HashMap<>();
-                            updates.put("idChat", idChat);
-                            updates.put("nombre", nombre);
-                            updates.put("direccion", direccion);
-                            updates.put("telefono", telefono);
-                            updates.put("email", email);
-                            updates.put("dui", dui);
-                            updates.put("foto", urlCompletaFoto);
-                            updates.put("token", miToken);
-                                databaseReference.child(miToken).updateChildren(updates).addOnSuccessListener(success -> {
-                                    mostrarMsg("Registro actualizado con exito.");
-                                }).addOnFailureListener(failure -> {
-                                    mostrarMsg("Error al actualizar datos: " + failure.getMessage());
-                                });
-
-                        } catch (Exception e) {
-                            mostrarMsg("ERROR al actualizar en Firebase: " + e.getMessage());
-                        }
-                    }
-            } else {
                     try {
-                        if( key!= null ) {
-                            databaseReference.child(key).setValue(chat).addOnSuccessListener(success->{
-                                mostrarMsg("Registro guardado con exito.");
-                                abrirVentana();
-                            }).addOnFailureListener(failure->{
-                                mostrarMsg("Error al registrar datos: "+failure.getMessage());
-                            });
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("idChat",idChat );
+                        updates.put("nombre", nombre);
+                        updates.put("direccion", direccion);
+                        updates.put("telefono", telefono);
+                        updates.put("email", email);
+                        updates.put("dui", dui);
+                        updates.put("urlFoto", urlCompletaFoto);
+                        //updates.put("usuario", cuentaID);
+                        updates.put("token", miToken);
 
+                        if( miToken!= null || miToken == ""){
+                            databaseReference = FirebaseDatabase.getInstance().getReference("Persona_chats");
+                            databaseReference.child(miToken).updateChildren(updates).addOnSuccessListener(success->{
+                                mostrarMsg("Registro actualizado con exito.");
+                            }).addOnFailureListener(failure->{
+                                mostrarMsg("Error al actualizar datos: "+failure.getMessage());
+                            });
+                        } else {
+                            mostrarMsg("Error al guardar en firebase.");
                         }
                     } catch (Exception e) {
-                        mostrarMsg("Error al guardar en fireBase: " + e.getMessage());
+                        mostrarMsg("ERROR al actualizar en Firebase: " + e.getMessage());
                     }
-                mostrarMsg("Error al guardar en firebase.");
+
+                } catch (Exception e) {
+                    mostrarMsg("Error al actualizar: " + e.getMessage());
+                }
+            }else{
+                try{
+                db = new DB(this);
+                try{
+                String mensaje = db.administrar_Chat("nuevo", datos);
+                }catch (Exception e){
+                    mostrarMsg("Error al guardar chat localmente: "+e.getMessage());
+                    return;
+                }
+
+                if( miToken.equals("") || miToken==null ){
+                    obtenerToken();
+                }
+                databaseReference = FirebaseDatabase.getInstance().getReference("Persona_chats");
+                String key = databaseReference.push().getKey();
+
+                chats chat = new chats(idChat, nombre, direccion, telefono, email, dui, urlCompletaFoto, miToken);
+
+                if( key!= null ){
+                    databaseReference.child(key).setValue(chat).addOnSuccessListener(success->{
+                        //mostrarMsg("Registro guardado con exito." + mensaje);
+                        abrirVentana();
+                    }).addOnFailureListener(failure->{
+                        mostrarMsg("Error al registrar datos: "+failure.getMessage());
+                    });
+                } else {
+                    mostrarMsg("Error al guardar en firebase.");
+                }}catch (Exception e){
+                    mostrarAlert("Error al guardar en firebase: "+e.getMessage());
+                }
+
             }
+
         }catch (Exception e){
             mostrarMsg("Error guardar: "+e.getMessage());
         }
+
+    }
+
+    private void mostrarAlert(String mensaje){
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Error");
+        builder.setMessage(mensaje);
+        builder.setPositiveButton("Aceptar", (dialog, which) -> dialog.dismiss());
+        builder.create().show();
     }
     private void tomarFoto(){
         img.setOnClickListener(view->{

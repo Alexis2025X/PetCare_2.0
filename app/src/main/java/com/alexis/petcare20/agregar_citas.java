@@ -1,14 +1,17 @@
 package com.alexis.petcare20;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +34,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class agregar_citas extends AppCompatActivity {
@@ -48,21 +53,25 @@ public class agregar_citas extends AppCompatActivity {
     Bundle parametros = new Bundle();
     String accion = "nuevo";
     String idCitas = "";
+    int idMascota = 0;
     String cuentaID, user;
     ImageView img;
     String urlCompletaFoto = "";
     Intent tomarFotoIntent;
     String miToken = "";
 
-    detectarInternet di;
     String miKey = "";
     DatabaseReference databaseReference;
+    Spinner spn;
+    String nombre_spinner;
+    mascotas_spinner mascotaSeleccionada;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_citas);
         img = findViewById(R.id.imgFotoMascotaCita);
+        spn = findViewById(R.id.spnNombresCitaMascota);
 
         db = new DB(this);
         //usuario = getIntent().getStringExtra("usuarioCuenta");
@@ -80,6 +89,58 @@ public class agregar_citas extends AppCompatActivity {
         }catch (Exception e){
             mostrarMsg("Error al tomar foto: "+e.getMessage());
         }
+        List<mascotas_spinner> listaNombres = nombresMascotas();
+        ArrayAdapter<mascotas_spinner> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listaNombres);
+        spn.setAdapter(adapter);
+        spn.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    mascotas_spinner mascotaSeleccionada = (mascotas_spinner) parent.getItemAtPosition(position);
+                    mascotas_spinner mascotaSeleccionadaFoto = (mascotas_spinner) parent.getItemAtPosition(position);
+                    nombre_spinner = mascotaSeleccionada.getNombre().toString();
+                    idMascota = mascotaSeleccionada.getIdMascota();
+
+                    //urlCompletaFoto = mascotaSeleccionada.getFoto();
+                   // urlCompletaFoto = mascotaSeleccionadaFoto.getFoto().toString();
+                    img.setImageURI(Uri.parse(urlCompletaFoto));
+                    //mostrarAlertDialog(img.getContext().toString());
+                }catch (Exception e){
+                    mostrarMsg("Error al seleccionar mascota: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+                // No hacer nada si no se selecciona nada
+            }
+        });
+
+    }
+    private List<mascotas_spinner> nombresMascotas(){
+        List<mascotas_spinner> listaNombres = new ArrayList<>();
+        Cursor cursor = db.lista_nombre_mascota_citas(cuentaID);
+        if (cursor != null){
+        if( cursor.moveToFirst() ){
+            do{
+                // Verificar si la columna existe antes de acceder a ella
+                if (cursor.getColumnIndex("idMascota") == -1 || cursor.getColumnIndex("nombre") == -1 || cursor.getColumnIndex("foto") == -1) {
+                    mostrarMsg("Error: Columnas no encontradas en la consulta.");
+                }else{
+                    mascotas_spinner mascota = new mascotas_spinner();
+                    mascota.setIdMascota(cursor.getInt(cursor.getColumnIndex("idMascota")));
+                    mascota.setNombre(cursor.getString(cursor.getColumnIndex("nombre")));
+                    urlCompletaFoto = cursor.getString(cursor.getColumnIndex("foto"));
+                    listaNombres.add(mascota);
+                }
+               // mascota.setFoto(cursor.getString(2));
+            }while(cursor.moveToNext());
+        }
+        db.close();
+        }else{
+            mostrarMsg("No se encontraron mascotas.");
+        }
+        return listaNombres;
     }
 
     @Override
@@ -106,10 +167,10 @@ public class agregar_citas extends AppCompatActivity {
 
                 idCitas = datos.getString("idCitas");
                 miKey = datos.getString("llave");
-                TextView tempVal = findViewById(R.id.txtNombreCitaMascota);
-                mostrarMsg(datos.getString("nombre") + "sfsdf");
+                //nombre_spinner = datos.getString("nombreMascota");
+                TextView tempVal;
 
-                tempVal.setText(datos.getString("nombre"));
+               // mostrarMsg(datos.getString("nombre") + "sfsdf");
 
 
                 tempVal = findViewById(R.id.txtFecha);
@@ -126,12 +187,14 @@ public class agregar_citas extends AppCompatActivity {
             }
 
         }catch (Exception e){
+/*
             AlertDialog.Builder confirmacion = new AlertDialog.Builder(this);
             confirmacion.setTitle("ERROR");
             confirmacion.setMessage("Este es el error: "+ e.getMessage());
             confirmacion.create().show();
+*/
 
-            //mostrarMsg("Error 1: "+e.getMessage());
+            mostrarMsg("Error 1: "+e.getMessage());
         }
     }
     private void abrirVentana() {
@@ -144,8 +207,10 @@ public class agregar_citas extends AppCompatActivity {
     }
     private void guardarCita(){
 
-        TextView  tempVal = findViewById(R.id.txtNombreCitaMascota);
-        String nombreMascota = tempVal.getText().toString();
+/*        TextView  tempVal = findViewById(R.id.txtNombreCitaMascota);
+        String nombreMascota = tempVal.getText().toString();*/
+
+        TextView  tempVal;
 
         tempVal = findViewById(R.id.txtFecha);
         String fecha = tempVal.getText().toString();
@@ -159,7 +224,8 @@ public class agregar_citas extends AppCompatActivity {
         //String usuario = getIntent().getStringExtra("usuarioCuenta");
 
 
-        if (nombreMascota.isEmpty() || fecha.isEmpty() || clinica.isEmpty() || nota.isEmpty()) {
+        if (fecha.isEmpty() || clinica.isEmpty() || nota.isEmpty()) {
+        //if (nombreMascota.isEmpty() || fecha.isEmpty() || clinica.isEmpty() || nota.isEmpty()) {
             mostrarMsg("Error: Todos los campos son obligatorios.");
             return;
         }
@@ -174,39 +240,36 @@ public class agregar_citas extends AppCompatActivity {
 
         if (accion == "modificar") {
             try {
-
-
-            String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, cuentaID,miKey};
+            String[] datos = {idCitas, nombre_spinner, fecha, clinica, nota, urlCompletaFoto, cuentaID,miKey};
             String mensaje = db.administrar_Citas(accion, datos);
             mostrarMsg("Estado de la cita: " + mensaje);
             //comienzo de actualizacion en fireBase
-                di = new detectarInternet(this);
-                if(di.hayConexionInternet()) {
-                    try {
-                        Map<String, Object> updates = new HashMap<>();
-                        updates.put("idCitas", idCitas);
-                        updates.put("nombreMascota", nombreMascota);
-                        updates.put("fecha", fecha);
-                        updates.put("clinica", clinica);
-                        updates.put("nota", nota);
-                        updates.put("urlFoto", urlCompletaFoto);
-                        updates.put("usuario", cuentaID);
-                        updates.put("llave", miKey);
 
-                        if (miKey != null || miKey == "") {
-                            databaseReference = FirebaseDatabase.getInstance().getReference("citas");
-                            databaseReference.child(miKey).updateChildren(updates).addOnSuccessListener(success -> {
-                                mostrarMsg("Registro actualizado con exito.");
-                            }).addOnFailureListener(failure -> {
-                                mostrarMsg("Error al actualizar datos: " + failure.getMessage());
-                            });
-                        } else {
-                            mostrarMsg("Error al guardar en firebase.");
-                        }
-                    } catch (Exception e) {
-                        mostrarMsg("ERROR al actualizar en Firebase: " + e.getMessage());
-                    }
+            try {
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("idCitas",idCitas );
+                updates.put("nombreMascota", nombre_spinner);
+                updates.put("fecha", fecha);
+                updates.put("clinica", clinica);
+                updates.put("nota", nota);
+                updates.put("urlFoto", urlCompletaFoto);
+                updates.put("usuario", cuentaID);
+                updates.put("llave", miKey);
+
+                if( miKey!= null || miKey == ""){
+                    databaseReference = FirebaseDatabase.getInstance().getReference("citas");
+                    databaseReference.child(miKey).updateChildren(updates).addOnSuccessListener(success->{
+                        mostrarMsg("Registro actualizado con exito.");
+                    }).addOnFailureListener(failure->{
+                        mostrarMsg("Error al actualizar datos: "+failure.getMessage());
+                    });
+                } else {
+                    mostrarMsg("Error al guardar en firebase.");
                 }
+            } catch (Exception e) {
+                mostrarMsg("ERROR al actualizar en Firebase: " + e.getMessage());
+            }
+
             } catch (Exception e) {
                 mostrarMsg("Error al actualizar: " + e.getMessage());
             }
@@ -223,15 +286,10 @@ public class agregar_citas extends AppCompatActivity {
                     key = "";
                 }
 
-                String[] datos = {idCitas, nombreMascota, fecha, clinica, nota, urlCompletaFoto, cuentaID,key};
+                String[] datos = {idCitas, nombre_spinner, fecha, clinica, nota, urlCompletaFoto, cuentaID,key};
                 String mensaje = db.administrar_Citas(accion, datos);
 
-
-                di = new detectarInternet(this);
-                if(di.hayConexionInternet()) {
-
-                citas cita = new citas(idCitas, nombreMascota, fecha, clinica, nota, urlCompletaFoto, cuentaID,key);
-
+                citas cita = new citas(idCitas, nombre_spinner, fecha, clinica, nota, urlCompletaFoto, cuentaID,key);
                 if( key!= null ){
                     databaseReference.child(key).setValue(cita).addOnSuccessListener(success->{
                         mostrarMsg("Registro guardado con exito.");
@@ -240,7 +298,6 @@ public class agregar_citas extends AppCompatActivity {
                     });
                 } else {
                     mostrarMsg("Error al guardar en firebase.");
-                }
                 }
                 mostrarMsg("Estado de la cita: " + mensaje);
             } catch (Exception e) {

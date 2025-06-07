@@ -44,11 +44,9 @@ public class agregar_mascotas extends AppCompatActivity {
     Intent tomarFotoMascotaIntent;
     String cuentaID;
     String miToken = "";
-
     String miKey = "";
     detectarInternet di;
     DatabaseReference databaseReference;
-
     TextView temval;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +77,6 @@ public class agregar_mascotas extends AppCompatActivity {
         try {
 
             Bundle parameters = getIntent().getExtras();
-
             accion = parameters.getString("accion");
 
 
