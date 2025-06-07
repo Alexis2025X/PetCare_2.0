@@ -12,7 +12,7 @@ import java.io.File;
 public class DB extends SQLiteOpenHelper {
 
     public void deleteOldDatabases(Context context) {
-        String[] oldDatabases = { "PetCare","petCare", "com.google.android.datatransport.events", "ue3.db"};
+        String[] oldDatabases = { "PetCare_1", "com.google.android.datatransport.events", "ue3.db"};
 
         for (String dbName : oldDatabases) {
             context.deleteDatabase(dbName);
@@ -23,7 +23,7 @@ public class DB extends SQLiteOpenHelper {
         }
     }
     //Nombre de la base de datos y version agp
-    private static final String DATABASE_NAME = "PetCare_1";
+    private static final String DATABASE_NAME = "petCare";
     private static final int DATABASE_VERSION = 1;
     //Cración de la base de datos
     //tabla cuentas
@@ -33,7 +33,8 @@ public class DB extends SQLiteOpenHelper {
     //tabla de Citas
     private static final String SQLdbCitas = "CREATE TABLE Citas (idCitas INTEGER PRIMARY KEY AUTOINCREMENT, nombreMascota  TEXT, fecha DATETIME, clinica TEXT, nota TEXT, foto TEXT, usuario TEXT, llave TEXT)";
     //tabla de Chats esta ira a Firebase
-    private static final String SQLdbChats = "CREATE TABLE Chat (idChat TEXT, nombre TEXT, direccion TEXT, telefono TEXT, email TEXT, dui TEXT, urlFoto TEXT, miToken TEXT)";
+    private static final String SQLdbChats = "CREATE TABLE Chat (idChat INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, direccion TEXT, telefono TEXT, email TEXT, dui TEXT, urlFoto TEXT, miToken TEXT)";
+    //private static final String SQLdbChats = "CREATE TABLE Chat (idChat TEXT, nombre TEXT, direccion TEXT, telefono TEXT, email TEXT, dui TEXT, urlFoto TEXT, miToken TEXT)";
 
     //Contexto de la base de datos
     public DB(Context context) {
@@ -192,10 +193,10 @@ public class DB extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT * FROM Cuentas", null);
     }
-/*    public Cursor lista_nombre_mascota_citas(String idCuenta){
+    public Cursor lista_nombre_mascota_citas(String idCuenta){
         SQLiteDatabase db = getReadableDatabase();
         return db.rawQuery("SELECT idMascota, nombre, foto FROM Mascotas WHERE usuario = '" + idCuenta + "'", null);
-    }*/
+    }
     public Cursor lista_mascotas(String idCuenta){
         //bd es el ejecutador de consultas
         SQLiteDatabase db = getReadableDatabase();
