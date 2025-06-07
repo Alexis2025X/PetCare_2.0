@@ -1,6 +1,8 @@
 package com.alexis.petcare20;
 
 
+import com.google.gson.internal.bind.JsonTreeReader;
+
 public class chats {
     String idChat;
     String nombre;
@@ -11,25 +13,36 @@ public class chats {
     String foto;
     //String urlCompletaFotoFirestore;
     String token;
+    String llave;
 
     public chats() {}
-    public chats(String idChat, String nombre, String direccion, String telefono, String email, String dui, String foto, String token) {
-        this.idChat = idChat;
-        this.nombre = nombre;
-        this.direccion = direccion;
-        this.telefono = telefono;
-        this.email = email;
-        this.dui = dui;
-        this.foto = foto;
-        this.token = token;
-        //this.urlCompletaFotoFirestore = urlCompletaFotoFirestore;
-    }
 /*    public String getUrlCompletaFotoFirestore() {
         return urlCompletaFotoFirestore;
     }
     public void setUrlCompletaFotoFirestore(String urlCompletaFotoFirestore) {
         this.urlCompletaFotoFirestore = urlCompletaFotoFirestore;
     }*/
+public chats(String idChat, String nombre, String direccion, String telefono, String email, String dui, String foto, String token, String llave) {
+    this.idChat = idChat;
+    this.nombre = nombre;
+    this.direccion = direccion;
+    this.telefono = telefono;
+    this.email = email;
+    this.dui = dui;
+    this.foto = foto;
+    this.token = token;
+    this.token = llave;
+    //this.urlCompletaFotoFirestore = urlCompletaFotoFirestore;
+}
+
+    public String getLlave() {
+        return llave;
+    }
+
+    public void setLlave(String llave) {
+        this.llave = llave;
+    }
+
     public String getToken() {
         return token;
     }
