@@ -742,6 +742,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 //jsonObject.put("urlCompletaFotoFirestore", chat.getUrlCompletaFotoFirestore());
                                 jsonObject.put("to", chat.getToken());
                                 jsonObject.put("from", miToken);
+                                jsonObject.put("llave", chat.getLlave());
                                 jsonArrayChats.put(jsonObject);
                             }
                             mostrarDatosChats();//setOnItemClickListener
@@ -775,6 +776,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     jsonObject.put("urlFoto", cChat.getString(6));
                     //jsonObject.put("cuentaID", cMascotas.getString(7));
                     jsonObject.put("to", cChat.getString(7));
+                    jsonObject.put("llave", cChat.getString(8));
                     jsonArrayChats.put(jsonObject);
                 }while(cChat.moveToNext());
 
@@ -811,7 +813,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             jsonObject.getString("dui"),
                             jsonObject.getString("urlFoto"),
                             //jsonObject.getString("urlCompletaFotoFirestore"),
-                            jsonObject.getString("to")
+                            jsonObject.getString("to"),
+                            jsonObject.getString("llave")
                     );
                     alChat.add(misChat);
                 }
@@ -875,7 +878,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 di = new detectarInternet(this);
                 if(di.hayConexionInternet()){//online
 
-        databaseReference  = FirebaseDatabase.getInstance().getReference("Persona_chats").child(jsonArrayChats.getJSONObject(posicion).getString("idChat"));
+        databaseReference  = FirebaseDatabase.getInstance().getReference("Persona_chats").child(jsonArrayChats.getJSONObject(posicion).getString("llave")); // si no funciona cambiar idChat por llave
 
         // Eliminar el registro
         databaseReference.removeValue()
@@ -1165,12 +1168,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
                     try {
-                        String[] datos = {idCuentaActual,nombre, usuario, contraseña, email,llaveCuenta};
+                        String[] datos = {idCuentaActual, nombre, usuario, contraseña, email, llaveCuenta};
                         db = new DB(this);
                         String respuesta = db.administrar_cuentas("modificar", datos);
 
                         di = new detectarInternet(this);
-                        if(di.hayConexionInternet()) {
+                        try{
+                        if (di.hayConexionInternet()) {
                             try {
 
                                 Map<String, Object> updates = new HashMap<>();
@@ -1197,10 +1201,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             }
 
-                    //String[] datos = {idCuentaActual,nombre, usuario, contraseña, email};
+                            //String[] datos = {idCuentaActual,nombre, usuario, contraseña, email};
 
 
-                        } catch (Exception e) {
+                        }
+                    }catch (Exception e) {
                             mostrarMsg("Error al actualizar la cuenta en fireBase: " + e.getMessage());
                         }
 

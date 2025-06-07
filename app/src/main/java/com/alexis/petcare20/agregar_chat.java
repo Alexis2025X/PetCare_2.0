@@ -37,7 +37,7 @@ public class agregar_chat extends AppCompatActivity {
     DB db;
     Bundle parametros = new Bundle();
     TextView tempVal;
-    String accion = "nuevo", idChat = "", id="", rev="";
+    String accion = "nuevo", idChat = "", id="", rev="",miKey = "";
     ImageView img;
     String urlCompletaFoto = "";
     //String urlCompletaFoto = "", getUrlCompletaFotoFirestore = "";
@@ -129,6 +129,7 @@ public class agregar_chat extends AppCompatActivity {
                 //id = datos.getString("_id");
                 //rev = datos.getString("_rev");
                 idChat = datos.getString("idChat");
+                miKey = datos.getString("llave");
 
                 tempVal = findViewById(R.id.txtNombreChatMascota);
                 tempVal.setText(datos.getString("nombre"));
@@ -167,7 +168,7 @@ public class agregar_chat extends AppCompatActivity {
                 mostrarMsg("Error: Todos los campos son obligatorios.");
                 return;
             }
-            String[] datos = {idChat, nombre, direccion, telefono, email, dui,  urlCompletaFoto,miToken};
+            String[] datos = {idChat, nombre, direccion, telefono, email, dui,  urlCompletaFoto,miToken,miKey};
 
             if (accion == "modificar") {
                 try {
@@ -188,10 +189,11 @@ public class agregar_chat extends AppCompatActivity {
                         updates.put("urlFoto", urlCompletaFoto);
                         //updates.put("usuario", cuentaID);
                         updates.put("token", miToken);
+                        updates.put("llave", miKey);
 
                         if( miToken!= null || miToken == ""){
                             databaseReference = FirebaseDatabase.getInstance().getReference("Persona_chats");
-                            databaseReference.child(miToken).updateChildren(updates).addOnSuccessListener(success->{
+                            databaseReference.child(miKey).updateChildren(updates).addOnSuccessListener(success->{
                                 mostrarMsg("Registro actualizado con exito.");
                             }).addOnFailureListener(failure->{
                                 mostrarMsg("Error al actualizar datos: "+failure.getMessage());
@@ -222,7 +224,7 @@ public class agregar_chat extends AppCompatActivity {
                 databaseReference = FirebaseDatabase.getInstance().getReference("Persona_chats");
                 String key = databaseReference.push().getKey();
 
-                chats chat = new chats(idChat, nombre, direccion, telefono, email, dui, urlCompletaFoto, miToken);
+                chats chat = new chats(idChat, nombre, direccion, telefono, email, dui, urlCompletaFoto, miToken,key);
 
                 if( key!= null ){
                     databaseReference.child(key).setValue(chat).addOnSuccessListener(success->{

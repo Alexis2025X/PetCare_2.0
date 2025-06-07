@@ -33,7 +33,7 @@ public class DB extends SQLiteOpenHelper {
     //tabla de Citas
     private static final String SQLdbCitas = "CREATE TABLE Citas (idCitas INTEGER PRIMARY KEY AUTOINCREMENT, nombreMascota  TEXT, fecha DATETIME, clinica TEXT, nota TEXT, foto TEXT, usuario TEXT, llave TEXT)";
     //tabla de Chats esta ira a Firebase
-    private static final String SQLdbChats = "CREATE TABLE Chat (idChat INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, direccion TEXT, telefono TEXT, email TEXT, dui TEXT, urlFoto TEXT, miToken TEXT)";
+    private static final String SQLdbChats = "CREATE TABLE Chat (idChat INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT, direccion TEXT, telefono TEXT, email TEXT, dui TEXT, urlFoto TEXT, miToken TEXT,llave TEXT)";
     //private static final String SQLdbChats = "CREATE TABLE Chat (idChat TEXT, nombre TEXT, direccion TEXT, telefono TEXT, email TEXT, dui TEXT, urlFoto TEXT, miToken TEXT)";
 
     //Contexto de la base de datos
@@ -146,10 +146,10 @@ public class DB extends SQLiteOpenHelper {
             String mensaje = "ok", sql = "";
             switch (accion) {
                 case "nuevo":
-                    sql = "INSERT INTO Chat (nombre, direccion, telefono, email, dui, urlFoto, miToken) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4] + "', '" + datos[5] + "', '" + datos[6] + "', '" + datos[7] + "')";
+                    sql = "INSERT INTO Chat (nombre, direccion, telefono, email, dui, urlFoto, miToken,llave) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4] + "', '" + datos[5] + "', '" + datos[6] + "', '" + datos[7] + "', '" + datos[8] + "')";
                     break;
                 case "modificar":
-                    sql = "UPDATE Chat SET nombre = '" + datos[1] + "', direccion = '" + datos[2] + "', telefono = '" + datos[3] + "', email = '" + datos[4] + "', dui = '" + datos[5] + "', urlFoto = '" + datos[6] + "' WHERE idChat = '" + datos[0] + "'";
+                    sql = "UPDATE Chat SET nombre = '" + datos[1] + "', direccion = '" + datos[2] + "', telefono = '" + datos[3] + "', email = '" + datos[4] + "', dui = '" + datos[5] + "', urlFoto = '" + datos[6] + "', miToken = '" + datos[7] + "', llave = '" + datos[8] + "' WHERE idChat = '" + datos[0] + "'";
                     break;
                 case "eliminar":
                     sql = "DELETE FROM Chat WHERE idChat = '" + datos[0] + "'";
