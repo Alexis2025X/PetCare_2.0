@@ -14,9 +14,10 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/crvFotoAmigoChats"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginLeft="60dp"
+        android:layout_marginTop="5dp"
         app:cardCornerRadius="150dp">
         <ImageView
             android:id="@+id/imgFotoAmigoChats"
@@ -48,12 +49,11 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="50dp"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/btnEnviarMsg"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:backgroundTint="@color/color_menu"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        app:icon="@drawable/enviar"/>
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/enviar"/>
 </RelativeLayout>

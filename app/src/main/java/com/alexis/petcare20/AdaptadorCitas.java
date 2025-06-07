@@ -62,9 +62,9 @@ public class AdaptadorCitas extends BaseAdapter {
             tempVal = itemView.findViewById(R.id.lblNotaAdaptador);
             tempVal.setText(misCitas.getnota());
 
-/*            ImageView img = itemView.findViewById(R.id.imgFotoAdaptador);
+            ImageView img = itemView.findViewById(R.id.imgFotoAdaptador);
             Bitmap bitmap = BitmapFactory.decodeFile(misCitas.getFoto());
-            img.setImageBitmap(bitmap);*/
+            img.setImageBitmap(bitmap);
         } catch (Exception e) {
             Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }

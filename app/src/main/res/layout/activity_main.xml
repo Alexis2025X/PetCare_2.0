@@ -34,8 +34,6 @@
                android:layout_below="@+id/txtBuscarMascotas"
                android:layout_width="match_parent"
                android:layout_height="match_parent"/>
-
-
        </RelativeLayout>
 <!--   android:layout_marginTop="-100dp"-->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -135,14 +133,13 @@
         android:orientation="vertical"
         android:visibility="gone">  <!-- Vista inicial visible -->
 
-        <TextView
+<!--        <TextView
             android:id="@+id/lblUbicacion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mi ubicación: Obteniendo ubicación... " />
+            android:text="Mi ubicación: Obteniendo ubicación... " />-->
         <fragment
             android:id="@+id/mapa"
-            android:layout_below="@+id/lblUbicacion"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
